@@ -1,0 +1,21 @@
+{
+  "name": "multivendor-project",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "Amna Atiq",
+  "type": "commonjs",
+  "main": "backend/server.json",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.3",
+    "nodemailer": "^8.0.10",
+    "nodemon": "^3.1.14"
+  }
+}
