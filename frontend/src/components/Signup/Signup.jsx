@@ -12,6 +12,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
+  const [loading, setLoading]= useState(false);
 
   const navigate=useNavigate();
 
@@ -22,23 +23,31 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const config = { headers: { "Content-Type": "multipart/form-data" } };
-    const newForm = new FormData();
-    newForm.append("file", avatar);
-    newForm.append("name", name);
-    newForm.append("email", email);
-    newForm.append("password", password);
+    setLoading(true);
 
-    axios
-      .post(`${server}/user/create-user`, newForm, config)
-      .then((res) => {
-        if(res.data.success === true){
-          navigate("/");
-        }
-      })
-      .catch((err) => {
-        console.log(err.response?.data);
-      });
+    try {
+      const config = {
+        headers: { "Content-Type": "multipart/form-data" },
+      };
+
+      const newForm = new FormData();
+      newForm.append("file", avatar);
+      newForm.append("name", name);
+      newForm.append("email", email);
+      newForm.append("password", password);
+
+      const res = await axios.post(
+        `${server}/user/create-user`,
+        newForm,
+        config
+      );
+
+      navigate("/");
+    } catch (err) {
+      console.log(err.response?.data);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -155,10 +164,11 @@ const Signup = () => {
               </div>
               <div>
                 <button
+                  disabled={loading}
                   type="submit"
                   className="w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
                 >
-                  Submit
+                  {loading?"Loading...":"Submit"}
                 </button>
               </div>
               <div className={`${styles.normalFlex} w-full`}>
