@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
 import { server } from "../../server";
+import { toast } from "react-toastify";
 
 const Signup = () => {
   const [name, setName] = useState("");
@@ -41,10 +42,14 @@ const Signup = () => {
         newForm,
         config
       );
+      toast.success(res.data.message);
+      setName("");
+      setEmail("");
+      setPassword("");
+      setAvatar();
 
-      alert(res.data.message);
-    } catch (err) {
-      console.log(err.response?.data);
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
