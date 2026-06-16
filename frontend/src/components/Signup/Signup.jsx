@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import axios from "axios";
 import { server } from "../../server";
@@ -14,7 +14,7 @@ const Signup = () => {
   const [avatar, setAvatar] = useState(null);
   const [loading, setLoading]= useState(false);
 
-  const navigate=useNavigate();
+  // const navigate=useNavigate();
 
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
@@ -42,7 +42,7 @@ const Signup = () => {
         config
       );
 
-      navigate("/");
+      alert(res.data.message);
     } catch (err) {
       console.log(err.response?.data);
     } finally {
