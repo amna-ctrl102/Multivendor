@@ -15,8 +15,6 @@ const Signup = () => {
   const [avatar, setAvatar] = useState(null);
   const [loading, setLoading]= useState(false);
 
-  // const navigate=useNavigate();
-
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
     setAvatar(file);
