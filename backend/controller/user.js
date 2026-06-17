@@ -61,8 +61,7 @@ const createActivationToken = (user) => {
 };
 
 // activate user
-router.post(
-  "/activation",(async (req, res, next) => {
+router.post("/activation", async (req, res, next) => {
     try {
       const { activation_token } = req.body;
 
@@ -87,12 +86,11 @@ router.post(
         password,
         avatar,
       });
-      sendToken(user, 201, res);
+      sendToken(user,201,res);
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
-  }),
-);
+});
 
 // Login user
 router.post("/login-user",async(req,res,next)=>{

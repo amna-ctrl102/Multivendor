@@ -1,23 +1,15 @@
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {LoginPage,SignupPage,ActivationPage} from "./Routes.js";
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
-import axios from "axios";
-import { server } from "./server.js";
 import { useEffect } from "react";
+import Store from "./redux/store";
+import { loadUser } from "./redux/actions/user";
 
 const App = () => {
   useEffect(()=>{
-    const getUser=async()=>{
-      try{
-        const res= await axios.get(`${server}/user/getuser`,{withCredentials:true});
-        toast.success(res.data.message)
-      }catch(error){
-        toast.error(error.response.data.message);
-      }
-    }
-    getUser();
+    Store.dispatch(loadUser());
   },[])
   return (
     <BrowserRouter>
