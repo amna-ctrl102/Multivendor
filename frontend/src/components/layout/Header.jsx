@@ -137,7 +137,7 @@ const Header = ({ activeHeading }) => {
             <Navbar active={activeHeading} />
           </div>
           <div className={`${styles.normalFlex}`}>
-            <div className={`${styles.normalFlex}`}>
+            <div>
               <div className="relative cursor-pointer mr-[15px]">
                 <AiOutlineHeart size={30} color="rgb(255 255 255 /83%)" />
                 <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
@@ -145,7 +145,7 @@ const Header = ({ activeHeading }) => {
                 </span>
               </div>
             </div>
-            <div className={`${styles.normalFlex}`}>
+            <div>
               <div className="relative cursor-pointer mr-[15px]">
                 <AiOutlineShoppingCart
                   size={30}
@@ -156,7 +156,7 @@ const Header = ({ activeHeading }) => {
                 </span>
               </div>
             </div>
-            <div className={`${styles.normalFlex}`}>
+            <div>
               <div className="relative cursor-pointer mr-[15px]">
                 <Link to="/login">
                     <CgProfile
