@@ -19,7 +19,7 @@ const Hero = () => {
             </p>
             <Link to="/products" className="inline-block">
                 <div className={`${styles.button} mt-5`}>
-                    <span className="text-[#fff] font-[Poppins] text-[18px] lg:text-[20px]">
+                    <span className="text-[#fff] font-[Poppins] text-[16px] sm:text-[18px] lg:text-[20px]">
                         Shop Now
                     </span>
                 </div>
