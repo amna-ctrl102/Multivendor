@@ -18,7 +18,6 @@ const ProductDetailsCard = ({ setOpen, data }) => {
 
   const [count, setCount] = useState(1);
   const [click, setClick] = useState();
-  const [select, setSelect] = useState();
   return (
     <div className="bg-[#fff]">
       {data ? (
