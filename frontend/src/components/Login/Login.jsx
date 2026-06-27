@@ -26,6 +26,7 @@ const Login = () => {
             if (res.data && res.data.success) {
                 toast.success("Login Success!");
                 navigate("/");
+                window.location.reload();
             } else {
                 toast.error(res.data?.message || "Login failed");
             }

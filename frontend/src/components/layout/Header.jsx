@@ -12,8 +12,11 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import DropDown from "./DropDown";
 import Navbar from "./Navbar";
+import { useSelector } from "react-redux";
+import { backend_url } from "../../server";
 
 const Header = ({ activeHeading }) => {
+  const { isAuthenticated, user } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -111,7 +114,7 @@ const Header = ({ activeHeading }) => {
           className={`${styles.section} relative ${styles.normalFlex} justify-between`}
         >
           {/* categories */}
-          <div onClick={()=>setDropDown(!dropDown)}>
+          <div onClick={() => setDropDown(!dropDown)}>
             <div className="relative h-[60px] mt-[10px] w-[270px] hidden 1000px:block">
               <BiMenuAltLeft size={30} className="absolute top-3 left-2" />
               <button
@@ -158,12 +161,19 @@ const Header = ({ activeHeading }) => {
             </div>
             <div>
               <div className="relative cursor-pointer mr-[15px]">
-                <Link to="/login">
-                    <CgProfile
-                        size={30}
-                        color="rgb(255 255 255 /83%)"
+                {isAuthenticated ? (
+                  <Link to="/profile">
+                    <img
+                      src={`${backend_url}${user.avatar}`}
+                      alt="profileImage"
+                      className="w-[35px] h-[35px] rounded-full object-cover"
                     />
-                </Link>
+                  </Link>
+                ) : (
+                  <Link to="/login">
+                    <CgProfile size={30} color="rgb(255 255 255 /83%)" />
+                  </Link>
+                )}
               </div>
             </div>
           </div>

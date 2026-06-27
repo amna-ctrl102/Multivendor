@@ -4,6 +4,8 @@ import ActivationPage from "../src/pages/ActivationPage";
 import HomePage from "../src/pages/HomePage";
 import ProductPage from "../src/pages/ProductPage";
 import BestSellingPage from "../src/pages/BestSellingPage";
+import EventsPage from "../src/pages/EventsPage";
+import FAQPage from "../src/pages/FAQPage.jsx";
 
 
 
@@ -14,4 +16,6 @@ export{
     HomePage,
     ProductPage,
     BestSellingPage,
+    EventsPage,
+    FAQPage,
 }
