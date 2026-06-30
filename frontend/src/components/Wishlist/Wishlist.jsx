@@ -1,11 +1,9 @@
-import React, { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import styles from "../../styles/styles";
-import { IoBagHandleOutline } from "react-icons/io5";
-import { HiPlus, HiOutlineMinus } from "react-icons/hi";
-import { Link } from "react-router-dom";
+import { BsCartPlus } from "react-icons/bs";
+import { AiOutlineHeart } from "react-icons/ai";
 
-const Cart = ({ setOpenCart }) => {
+const Wishlist = ({ setWishList }) => {
   const cartData = [
     {
       name: "Iphone 14 pro max",
@@ -31,28 +29,20 @@ const Cart = ({ setOpenCart }) => {
             <RxCross1
               size={25}
               className="cursor-pointer"
-              onClick={() => setOpenCart(false)}
+              onClick={() => setWishList(false)}
             />
           </div>
           {/* Item Length */}
           <div className={`${styles.normalFlex} p-4`}>
-            <IoBagHandleOutline size={25} />
+            <AiOutlineHeart size={25} />
             <h5 className="pl-2 text-[20px] font-[500]">3 items</h5>
           </div>
-          {/* cart Single items */}
+          {/* wishList Single items */}
           <br />
           <div className="w-full border-t">
             {cartData &&
               cartData.map((i, index) => <CartSingle key={index} data={i} />)}
           </div>
-        </div>
-        {/* Checkout button */}
-        <div className="px-5 mb-3">
-            <Link to="/checkout">
-                <div className={`h-[45px] flex items-center justify-center w-[100%] bg-[#e44343] rounded-[5px]`}>
-                    <h1 className="text-[#fff] text-[18px] font-[600]">Checkout Now (USD $1080)</h1>
-                </div>
-            </Link>
         </div>
       </div>
     </div>
@@ -60,44 +50,33 @@ const Cart = ({ setOpenCart }) => {
 };
 
 const CartSingle = ({ data }) => {
-  const [value, setValue] = useState(1);
-  const totalPrice = data.price * value;
   return (
     <div className="border-b p-4">
       <div className="w-full flex items-center">
-        <div>
-          <div
-            className={`bg-[#e44343] border border-[#e4434373] rounded-full w-[23px] h-[23px] ${styles.normalFlex} justify-center cursor-pointer mb-1`}
-            onClick={() => setValue(value + 1)}
-          >
-            <HiPlus size={18} color="#fff" />
-          </div>
-          <span className="pl-[8px]">{value}</span>
-          <div
-            className="bg-[#a7abb14f] rounded-full w-[23px] h-[23px] flex items-center justify-center cursor-pointer mt-1"
-            onClick={() => setValue(value === 1 ? 1 : value - 1)}
-          >
-            <HiOutlineMinus size={16} color="#7d879c" />
-          </div>
-        </div>
+        <RxCross1 className="cursor-pointer" />
         <img
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeZaOdPZiAUmlU-zuaFhu8Llam8KYlmW_gVfHEOirweQ&s=10"
-          alt="CartImage"
+          alt="WishlistImage"
           className="w-[56px] h-[56px] ml-5"
         />
         <div className="pl-[5px]">
           <h1 className="text-[15px]">{data.name}</h1>
-          <h4 className="font-[400] text-[13px] text-[#00000082]">
-            ${data.price} x {value}
-          </h4>
           <h4 className="font-[600px] text-[15px] pt-[3px] text-[#d02222] font-Roboto">
-            USD ${totalPrice}
+            USD $
           </h4>
         </div>
-        <RxCross1  className="cursor-pointer ml-8"/>
+        <div className="ml-8">
+          <h4>
+            <BsCartPlus
+              size={20}
+              className="cursor-pointer"
+              title="Add to cart"
+            />
+          </h4>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Cart;
+export default Wishlist;
