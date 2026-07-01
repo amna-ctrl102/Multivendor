@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { RxCross1 } from "react-icons/rx";
 import styles from "../../../styles/styles";
-import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart } from "react-icons/ai";
+import {
+  AiFillHeart,
+  AiOutlineHeart,
+  AiOutlineMessage,
+  AiOutlineShoppingCart,
+} from "react-icons/ai";
 
 const ProductDetailsCard = ({ setOpen, data }) => {
   const handleMessageSubmit = () => {};
@@ -48,11 +53,12 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   </div>
                 </div>
                 <div
-                  className={`${styles.button} bg-[#000] mt-3 rounded-[4px] h-11`}
+                  className={`${styles.button} w-full 800px:w-auto mt-3 rounded-md h-11 px-5 flex items-center justify-center cursor-pointer`}
                   onClick={handleMessageSubmit}
                 >
-                  <span className="text-[#fff] flex items-center">
-                    Send Message <AiOutlineMessage className="ml-1" />
+                  <span className="text-white flex items-center gap-2 text-sm 800px:text-base font-medium">
+                    Send Message
+                    <AiOutlineMessage />
                   </span>
                 </div>
                 <h5 className="text-[16px] text-[red]">
@@ -64,7 +70,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   {data.name}
                 </h1>
                 <p>{data.description}</p>
-                <div className="flex pt-3">
+                <div className="flex pt-3 mt-2">
                   <h4 className={`${styles.productDiscountPrice}`}>
                     {data.discount_price}$
                   </h4>
@@ -72,25 +78,25 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                     {data.price ? data.price + " $" : null}
                   </h3>
                 </div>
-                <div className="flex items-center mt-12 justify-between pr-3">
-                  <div>
+                <div className="flex items-center mt-6 justify-between pr-3">
+                  <div className="flex items-center mt-5">
                     <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      className="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l-md px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
                       onClick={decrementCount}
                     >
                       -
                     </button>
-                    <span className="bg-gray-200 text-gray-800 font-medium px-4 py-[11px] rounded-l rounded-r">
+                    <span className="w-12 h-12 flex items-center justify-center bg-gray-200 text-gray-800 font-medium text-lg">
                       {count}
                     </span>
                     <button
-                      className="bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      className="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-r-md px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
                       onClick={IncrementCount}
                     >
                       +
                     </button>
                   </div>
-                  <div>
+                  <div className="mt-5">
                     {click ? (
                       <AiFillHeart
                         size={30}
@@ -111,10 +117,10 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   </div>
                 </div>
                 <div
-                  className={`${styles.button} mt-6 rounded-[4px] h-11 flex items-center`}
+                  className={`${styles.button} w-full 800px:w-auto mt-6 rounded-md h-11 px-5 flex items-center justify-center cursor-pointer`}
                 >
-                  <span className="text-[#fff] flex items-center">
-                    Add to cart <AiOutlineShoppingCart className="ml-1" />
+                  <span className="text-white flex items-center gap-2 text-sm 800px:text-base font-medium">
+                    Add to cart <AiOutlineShoppingCart/>
                   </span>
                 </div>
               </div>

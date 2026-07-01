@@ -4,7 +4,6 @@ import styles from '../styles/styles'
 import { useSearchParams } from 'react-router-dom'
 import { productData } from '../static/data'
 import ProductCard from '../components/Route/ProductCard/ProductCard'
-import Sponsored from '../components/Route/Sponsored/Sponsored'
 import Footer from '../components/layout/Footer'
 
 const ProductPage = () => {
@@ -40,7 +39,6 @@ const ProductPage = () => {
             ):null
         }
       </div>
-      <Sponsored/>
       <Footer/>
     </div>
   )
