@@ -1,13 +1,38 @@
 import { MdOutlineTrackChanges } from "react-icons/md";
-import { AiOutlineCreditCard, AiOutlineLogin, AiOutlineMessage } from "react-icons/ai";
+import {
+  AiOutlineCreditCard,
+  AiOutlineLogin,
+  AiOutlineMessage,
+} from "react-icons/ai";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
 import { IoBagHandleOutline } from "react-icons/io5";
 import { TbAddressBook } from "react-icons/tb";
 import { RxPerson } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { server } from "../../server";
 
 const ProfileSideBar = ({ active, setActive }) => {
   const navigate = useNavigate();
+
+  const LogoutHandler = async () => {
+    try {
+      const res = await axios.get(`${server}/user/logout`, {
+        withCredentials: true,
+      });
+      toast.success(res.data.message);
+      navigate("/login");
+      window.location.reload();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
+    }
+  };
+
   return (
     <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-8">
       <div
@@ -46,7 +71,10 @@ const ProfileSideBar = ({ active, setActive }) => {
 
       <div
         className="flex items-center cursor-pointer w-full mb-8"
-        onClick={() => {setActive(4);navigate("/inbox");}}
+        onClick={() => {
+          setActive(4);
+          navigate("/inbox");
+        }}
       >
         <AiOutlineMessage size={20} color={active === 4 ? "red" : ""} />
         <span
@@ -70,7 +98,10 @@ const ProfileSideBar = ({ active, setActive }) => {
 
       <div
         className="flex items-center cursor-pointer w-full mb-8"
-        onClick={() => setActive(6)}
+        onClick={() => {
+          setActive(6);
+          LogoutHandler();
+        }}
       >
         <AiOutlineCreditCard size={20} color={active === 6 ? "red" : ""} />
         <span
@@ -94,7 +125,7 @@ const ProfileSideBar = ({ active, setActive }) => {
 
       <div
         className="single_item flex items-center cursor-pointer w-full mb-8"
-        // onClick={logoutHandler}
+        onClick={() => setActive(8) || LogoutHandler()}
       >
         <AiOutlineLogin size={20} color={active === 8 ? "red" : ""} />
         <span

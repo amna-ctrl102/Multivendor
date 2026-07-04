@@ -137,4 +137,20 @@ router.get("/getuser", isAuthenticated, async(req,res,next)=>{
     }
 });
 
+router.get("/logout", isAuthenticated,async(req,res,next)=>{
+  try{
+    res.cookie("token",null,{
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      success:true,
+      message: "Log out Successfull!",
+    })
+  }catch(error){
+    return next(new ErrorHandler(error.message,500));
+  }
+})
+
 module.exports = router;
