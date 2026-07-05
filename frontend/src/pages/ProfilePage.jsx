@@ -13,10 +13,10 @@ const ProfilePage = () => {
 
       <div className="min-h-screen bg-[#f5f5f5] py-6 md:py-10">
         <div
-          className={`${styles.section} flex flex-col lg:flex-row gap-6`}
+          className={`${styles.section} flex flex-row gap-6`}
         >
           {/* Sidebar */}
-          <div className="w-full lg:w-[300px] xl:w-[335px] flex-shrink-0">
+          <div className="w-[50px] 800px:w-[335px]">
             <ProfileSideBar
               active={active}
               setActive={setActive}

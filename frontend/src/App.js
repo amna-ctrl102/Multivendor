@@ -42,11 +42,14 @@ const App = () => {
             <Route path="/best-selling" element={<BestSellingPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/faq" element={<FAQPage />} />
-            <Route path="/profile" element={
-              <ProtectedRoute isAuthenticated={isAuthenticated}>
-                <ProfilePage/>
-              </ProtectedRoute>
-            } />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute isAuthenticated={isAuthenticated} loading={loading}>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
           <ToastContainer
             position="bottom-center"

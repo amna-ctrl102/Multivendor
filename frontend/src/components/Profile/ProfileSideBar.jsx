@@ -41,7 +41,7 @@ const ProfileSideBar = ({ active, setActive }) => {
       >
         <RxPerson size={20} color={active === 1 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 1 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 1 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Profile
         </span>
@@ -52,7 +52,7 @@ const ProfileSideBar = ({ active, setActive }) => {
       >
         <IoBagHandleOutline size={20} color={active === 2 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 2 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 2 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Orders
         </span>
@@ -63,7 +63,7 @@ const ProfileSideBar = ({ active, setActive }) => {
       >
         <HiOutlineReceiptRefund size={20} color={active === 3 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 3 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 3 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Refunds
         </span>
@@ -78,7 +78,7 @@ const ProfileSideBar = ({ active, setActive }) => {
       >
         <AiOutlineMessage size={20} color={active === 4 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 4 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 4 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Inbox
         </span>
@@ -90,7 +90,7 @@ const ProfileSideBar = ({ active, setActive }) => {
       >
         <MdOutlineTrackChanges size={20} color={active === 5 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 5 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 5 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Track Order
         </span>
@@ -100,12 +100,11 @@ const ProfileSideBar = ({ active, setActive }) => {
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => {
           setActive(6);
-          LogoutHandler();
         }}
       >
         <AiOutlineCreditCard size={20} color={active === 6 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 6 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 6 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Payment Methods
         </span>
@@ -117,7 +116,7 @@ const ProfileSideBar = ({ active, setActive }) => {
       >
         <TbAddressBook size={20} color={active === 7 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 7 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 7 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Address
         </span>
@@ -129,7 +128,7 @@ const ProfileSideBar = ({ active, setActive }) => {
       >
         <AiOutlineLogin size={20} color={active === 8 ? "red" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 8 ? "text-[red]" : ""} sm:block`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 8 ? "text-[red]" : ""} 800px:block hidden`}
         >
           Log out
         </span>

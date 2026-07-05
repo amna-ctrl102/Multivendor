@@ -45,7 +45,7 @@ const ProfileContent = ({ active }) => {
           <div className="w-full px-2 md:px-5">
             <form onSubmit={handleSubmit}>
               <div className="w-full flex flex-col md:flex-row gap-5 md:gap-10">
-                <div className="w-full md:w-1/2">
+                <div className="w-[100%] 800px:w-[50%]">
                   <label className="block pb-2">Full Name</label>
                   <input
                     type="text"
@@ -55,11 +55,11 @@ const ProfileContent = ({ active }) => {
                     onChange={(e) => setName(e.target.value)}
                   />
                 </div>
-                <div className="w-full md:w-1/2">
+                <div className="w-[100%] 800px:w-[50%]">
                   <label className="block pb-2">Email Address</label>
                   <input
                     type="email"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132] mb-6 800px:mb-0`}
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -67,7 +67,7 @@ const ProfileContent = ({ active }) => {
                 </div>
               </div>
               <div className="w-full flex flex-col md:flex-row gap-5 md:gap-10 md:mt-5">
-                <div className="w-full md:w-1/2">
+                <div className="w-[100%] 800px:w-[50%]">
                   <label className="block pb-2">Phone Number</label>
                   <input
                     type="text"
@@ -77,11 +77,11 @@ const ProfileContent = ({ active }) => {
                     onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
-                <div className="w-full md:w-1/2">
+                <div className="w-[100%] 800px:w-[50%]">
                   <label className="block pb-2">Zip Code</label>
                   <input
                     type="number"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132] mb-6 800px:mb-0`}
                     required
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
@@ -89,7 +89,7 @@ const ProfileContent = ({ active }) => {
                 </div>
               </div>
               <div className="w-full flex flex-col md:flex-row gap-5 md:gap-10 md:mt-5">
-                <div className="w-full md:w-1/2">
+                <div className="w-[100%] 800px:w-[50%]">
                   <label className="block pb-2">Address1</label>
                   <input
                     type="address"
@@ -99,7 +99,7 @@ const ProfileContent = ({ active }) => {
                     onChange={(e) => setAddress1(e.target.value)}
                   />
                 </div>
-                <div className="w-full md:w-1/2">
+                <div className="w-[100%] 800px:w-[50%]">
                   <label className="block pb-2">Address2</label>
                   <input
                     type="address"
@@ -434,11 +434,11 @@ const PaymentMethod = () => {
           />
           <h5 className="pl-5 font-[600]">Amna Atiq</h5>
         </div>
-        <div className="pl-8 flex items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-6">
           <h6>1234 **** **** ****</h6>
-          <h5 className="pl-6">03/2026</h5>
+          <h5 className="sm:pl-10">03/2026</h5>
         </div>
-        <div className="min-w-[10%] flex items-center justify-between pl-8">
+        <div className="min-w-[10%] flex justify-end md:justify-center pl-8">
           <AiOutlineDelete size={25} className="cursor-pointer" />
         </div>
       </div>
@@ -453,22 +453,32 @@ const Address = () => {
         <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
           My Addresses
         </h1>
+
         <div className={`${styles.button} rounded-md`}>
           <span className="text-[#fff]">Add New</span>
         </div>
       </div>
+
       <br />
-      <div className="w-full bg-white h-[70px] rounded-[4px] flex items-center px-3 shadow justify-between pr-10">
-        <div className="flex items-center">
-          <h5 className="pl-5 font-[600]">Default</h5>
+
+      <div className="w-full bg-white rounded-[4px] shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        {/* Address Type */}
+        <div>
+          <h5 className="font-[600]">Default</h5>
         </div>
-        <div className="pl-8 flex items-center">
-          <h6 className="pl-6">House# 852 block# 49 Samanabad</h6>
+
+        {/* Address */}
+        <div>
+          <h6>House# 852 block# 49 Samanabad</h6>
         </div>
-        <div className="pl-8 flex items-center">
-          <h6 className="pl-6">+92 322498368</h6>
+
+        {/* Phone */}
+        <div>
+          <h6>+92 322498368</h6>
         </div>
-        <div className="min-w-[10%] flex items-center justify-between pl-8">
+
+        {/* Delete Icon */}
+        <div className="flex justify-end md:justify-center">
           <AiOutlineDelete size={25} className="cursor-pointer" />
         </div>
       </div>
