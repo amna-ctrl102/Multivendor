@@ -25,7 +25,7 @@ const ProfileContent = ({ active }) => {
     e.preventDefault();
   };
   return (
-    <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-8">
+    <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-8 mt-16 800px:mt-0">
       {active === 1 && (
         <>
           <div className="flex justify-center w-full">

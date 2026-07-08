@@ -30,7 +30,7 @@ const ProductDetails = ({ data }) => {
 
   return (
     <>
-      <div className="bg-white w-[95%] max-w-[1400px] shadow-md rounded-xl mt-8 mb-8 mx-auto p-4 800px:p-6">
+      <div className="bg-white w-[95%] max-w-[1400px] shadow-md rounded-xl sm:mt-8 mb-8 mx-auto p-4 800px:p-6 mt-20">
         {data && (
           <div className="w-full">
             <div className="w-full flex flex-col 800px:flex-row gap-8">

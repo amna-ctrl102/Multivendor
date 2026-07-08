@@ -11,19 +11,21 @@ import { RxPerson } from "react-icons/rx";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
 import { server } from "../../server";
 
 const ProfileSideBar = ({ active, setActive }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const LogoutHandler = async () => {
     try {
       const res = await axios.get(`${server}/user/logout`, {
         withCredentials: true,
       });
+      dispatch({ type: "LogoutSuccess" });
       toast.success(res.data.message);
-      navigate("/login");
-      window.location.reload();
+      navigate("/login", { replace: true });
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -34,7 +36,7 @@ const ProfileSideBar = ({ active, setActive }) => {
   };
 
   return (
-    <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-8">
+    <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-8 mt-16 800px:mt-0">
       <div
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(1)}
