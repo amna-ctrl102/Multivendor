@@ -14,8 +14,8 @@ const { isAuthenticated } = require("../middleware/auth");
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
-    const userEmail = await User.findOne({ email });
-    if (userEmail) {
+    const userInfo = await User.findOne({ email });
+    if (userInfo) {
       if (req.file) {
         const filename = req.file.filename;
         const filePath = `uploads/${filename}`;

@@ -3,6 +3,7 @@ const app=express();
 const errorMiddleware = require("./middleware/error");
 const cookieParser=require("cookie-parser");
 const userRouter=require("./controller/user");
+const shopRouter=require("./controller/shop");
 const cors= require("cors");
 
 //config
@@ -11,7 +12,7 @@ if(process.env.NODE_ENV !== "PRODUCTION"){
         path:"backend/config/.env"
     })
 }
-
+ 
 app.use(cors({
     origin: "http://localhost:3000",
     credentials: true,
@@ -23,7 +24,7 @@ app.use(express.urlencoded({extended:true}));
 
 // Routes
 app.use("/api/v2/user",userRouter);
-
+app.use("/api/v2/shop",shopRouter);
 
 // it's for Errorhandling
 app.use(errorMiddleware);
