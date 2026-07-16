@@ -121,7 +121,7 @@ router.post("/login-user",async(req,res,next)=>{
 //load user
 router.get("/getuser", isAuthenticated, async(req,res,next)=>{
     try{
-        const user =await User.findById(req.user.id);
+        const user =await User.findById(req.user._id);
 
         if(!user){
             return next(new ErrorHandler("User doesn't exists",400));

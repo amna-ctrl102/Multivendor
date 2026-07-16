@@ -173,7 +173,7 @@ const Header = ({ activeHeading }) => {
             </div>
             <div className={`${styles.normalFlex}`}>
               <div className="relative cursor-pointer mr-[15px]">
-                {isAuthenticated ? (
+                {isAuthenticated && user?.avatar ? (
                   <Link to="/profile">
                     <img
                       src={`${backend_url}${user.avatar}`}
@@ -301,7 +301,7 @@ const Header = ({ activeHeading }) => {
             <br />
             <br />
             <div className="flex w-full justify-center">
-              {isAuthenticated ? (
+              {isAuthenticated && user?.avatar ? (
                 <div>
                   <Link to="/profile">
                     <img
