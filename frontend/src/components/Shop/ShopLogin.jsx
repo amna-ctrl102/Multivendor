@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import styles from "../../styles/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { server } from "../../server";
@@ -12,7 +12,7 @@ const ShopLogin = () => {
   const [visible, setVisible] = useState(false);
   const [loading, setLoading]= useState(false);
 
-//   const navigate=useNavigate();
+  const navigate=useNavigate();
 
   const handleSubmit=async(e)=>{
     e.preventDefault();
@@ -25,6 +25,7 @@ const ShopLogin = () => {
             );
             if (res.data && res.data.success) {
                 toast.success("Login Success!");
+                navigate("/dashboard");
                 window.location.reload();
             } else {
                 toast.error(res.data?.message || "Login failed");

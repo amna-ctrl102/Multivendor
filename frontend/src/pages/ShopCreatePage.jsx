@@ -5,12 +5,12 @@ import { useSelector } from 'react-redux';
 
 const ShopCreatePage = () => {
   const navigate=useNavigate();
-  const {isSeller, seller}=useSelector((state)=>state.seller);
+  const {isSeller, seller, isLoading}=useSelector((state)=>state.seller);
   useEffect(()=>{
     if(isSeller === true && seller?._id){
       navigate(`/shop/${seller._id}`)
     }
-  },[isSeller, navigate, seller?._id])
+  },[isSeller, navigate, seller?._id, isLoading])
   return (
     <div>
       <ShopCreate/>
