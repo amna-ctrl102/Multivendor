@@ -4,6 +4,7 @@ const errorMiddleware = require("./middleware/error");
 const cookieParser=require("cookie-parser");
 const userRouter=require("./controller/user");
 const shopRouter=require("./controller/shop");
+const productRouter=require("./controller/product");
 const cors= require("cors");
 
 //config
@@ -25,6 +26,7 @@ app.use(express.urlencoded({extended:true}));
 // Routes
 app.use("/api/v2/user",userRouter);
 app.use("/api/v2/shop",shopRouter);
+app.use("/api/v2/product",productRouter);
 
 // it's for Errorhandling
 app.use(errorMiddleware);

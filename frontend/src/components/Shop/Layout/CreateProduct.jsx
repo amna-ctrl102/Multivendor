@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { categoriesData } from "../../../static/data";
 import { AiOutlinePlusCircle } from "react-icons/ai";
+import { createProduct } from "../../../redux/actions/product";
+import { toast } from "react-toastify";
 
 const CreateProduct = () => {
   const { seller } = useSelector((state) => state.seller);
+  const { success, error } = useSelector((state) => state.products);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -18,9 +21,16 @@ const CreateProduct = () => {
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-  };
+  useEffect(()=>{
+    if(error){
+        toast.error(error);
+    }
+    if(success){
+        toast.success("Product created successfully!");
+        navigate("/dashboard");
+        window.location.reload();
+    }
+  }, [error,success,navigate])
 
   const handleImageChange = (e) => {
     e.preventDefault();
@@ -29,8 +39,26 @@ const CreateProduct = () => {
     setImages((prevImages) => [...prevImages, ...files]);
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const newForm= new FormData();
+
+    images.forEach((image)=>{
+        newForm.append("images", image);
+    });
+    newForm.append("name",name);
+    newForm.append("description",description);
+    newForm.append("category",category);
+    newForm.append("tags",tags);
+    newForm.append("originalPrice",originalPrice);
+    newForm.append("discountPrice",discountPrice);
+    newForm.append("stock",stock);
+    newForm.append("shopId", seller._id);
+    dispatch(createProduct(newForm));
+  };
+
   return (
-    <div className="w-[50%] bg-white shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
+    <div className="w-[60%] bg-white shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
       <h5 className="text-[25px] sm:text-[30px] font-Poppins text-center">Create Product</h5>
       {/* Create Product Form */}
       <form onSubmit={handleSubmit}>
@@ -54,15 +82,17 @@ const CreateProduct = () => {
           <label className="pb-3">
             Description <span className="text-red-500">*</span>
           </label>
-          <input
+          <textarea
+            cols="30"
+            rows="8"
             type="text"
             name="description"
             required
             value={description}
-            className="mt-2 appearance-none block w-full p-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+            className="mt-2 appearance-none block w-full px-3 pt-2 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="Enter your product description..."
             onChange={(e) => setDescription(e.target.value)}
-          />
+          ></textarea>
         </div>
         <br />
         <div>
@@ -147,8 +177,9 @@ const CreateProduct = () => {
           </label>
           <input
             type="file"
-            name=""
+            name="images"
             id="upload"
+            required
             accept="image/*"
             multiple
             onChange={handleImageChange}
