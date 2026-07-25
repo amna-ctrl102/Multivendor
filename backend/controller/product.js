@@ -28,6 +28,20 @@ router.post("/create-product", upload.array("images"), async(req,res,next)=>{
     }catch(error){
         return next(new ErrorHandler(error,400));
     }
-})
+});
+
+
+router.get("/get-all-products-shop/:id", async(req,res,next)=>{
+    try{
+        const products= await Product.find({shopId: req.params.id});
+
+        res.status(201).json({
+            success:true,
+            products,
+        });
+    }catch(error){
+        return next(new ErrorHandler(error,404));
+    }
+});
 
 module.exports = router;
