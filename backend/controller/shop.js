@@ -8,7 +8,7 @@ const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const sendShopToken = require("../utils/shopToken");
-const { isAuthenticated, isSeller } = require("../middleware/auth");
+const { isSeller } = require("../middleware/auth");
 
 router.post("/create-shop", upload.single("file"), async (req, res, next) => {
   try {
@@ -138,6 +138,22 @@ router.get("/getSeller", isSeller, async (req, res, next) => {
     });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+router.get("/logout", isSeller,async(req,res,next)=>{
+  try{
+    res.cookie("seller_token",null,{
+      expires: new Date(Date.now()),
+      httpOnly: true,
+    });
+
+    res.status(200).json({
+      success:true,
+      message: "Log out Successfull!",
+    })
+  }catch(error){
+    return next(new ErrorHandler(error.message,500));
   }
 });
 
