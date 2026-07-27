@@ -22,7 +22,13 @@ import { useEffect } from "react";
 import Store from "./redux/store";
 import { loadSeller, loadUser } from "./redux/actions/user";
 import ProtectedRoute from "./routes/ProtectedRoute";
-import { ShopHomePage, ShopDashboardPage, ShopCreatedProductPage, ShopAllProductsPage } from "./routes/ShopRoutes";
+import {
+  ShopHomePage,
+  ShopDashboardPage,
+  ShopCreatedProductPage,
+  ShopAllProductsPage,
+  ShopCreateEventsPage,
+} from "./routes/ShopRoutes";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute";
 
 const App = () => {
@@ -97,6 +103,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopAllProductsPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-create-events"
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateEventsPage />
             </SellerProtectedRoute>
           }
         />
