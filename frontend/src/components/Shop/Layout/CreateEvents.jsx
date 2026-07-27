@@ -77,7 +77,9 @@ const CreateEvents = () => {
     newForm.append("category", category);
     newForm.append("tags", tags);
     newForm.append("originalPrice", originalPrice);
-    newForm.append("discountPrice", discountPrice);
+    if (discountPrice !== "" && discountPrice !== undefined) {
+        newForm.append("discountPrice", discountPrice);
+    }
     newForm.append("stock", stock);
     newForm.append("shopId", seller._id);
     newForm.append("start_Date", startDate.toISOString());
@@ -178,7 +180,6 @@ const CreateEvents = () => {
           <input
             type="number"
             name="price"
-            required
             value={discountPrice}
             className="mt-2 appearance-none block w-full p-3 border border-gray-300 rounded-[3px] placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
             placeholder="Enter your event product price with discount..."

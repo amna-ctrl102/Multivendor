@@ -1,23 +1,24 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteProduct, getAllProductsShop } from '../../../redux/actions/product';
+import { deleteEvent, getAllEventsShop } from '../../../redux/actions/event';
 import { AiOutlineDelete, AiOutlineEye } from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { Button } from "@mui/material";
 import Loader from '../../layout/Loader';
 import { DataGrid } from '@mui/x-data-grid';
 
-const AllProducts = () => {
-    const {products, isLoading}=useSelector((state)=>state.products);
+
+const AllEvents = () => {
+    const {events, isLoading}=useSelector((state)=>state.events);
     const {seller}=useSelector((state)=>state.seller);
     const dispatch= useDispatch();
 
     useEffect(()=>{
-        dispatch(getAllProductsShop(seller._id));
+        dispatch(getAllEventsShop(seller._id));
     },[dispatch, seller._id]);
 
     const handleDelete=(id)=>{
-        dispatch(deleteProduct(id));
+        dispatch(deleteEvent(id));
         window.location.reload();
     }
 
@@ -96,11 +97,11 @@ const AllProducts = () => {
 
     const row=[];
 
-    products && products.forEach((item)=>{
+    events && events.forEach((item)=>{
         row.push({
             id:item._id,
             name:item.name,
-            price:item.discountPrice? "US$" + item.discountPrice : "US$" + item.originalPrice,
+            price:item.discountPrice? "US$ " + item.discountPrice : "US$ " + item.originalPrice,
             Stock:item.stock,
             Sold: 10,
         });
@@ -127,5 +128,6 @@ const AllProducts = () => {
   )
 }
 
-export default AllProducts
+export default AllEvents
+
 

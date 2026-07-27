@@ -4,6 +4,8 @@ const Event=require("../model/event");
 const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Shop = require("../model/shop");
+const { isSeller } = require("../middleware/auth");
+const fs= require("fs");
 
 router.post("/create-event", upload.array("images"), async(req,res,next)=>{
     try{
@@ -27,6 +29,49 @@ router.post("/create-event", upload.array("images"), async(req,res,next)=>{
         }
     }catch(error){
         return next(new ErrorHandler(error,400));
+    }
+});
+
+router.get("/get-all-events-shop/:id", async(req,res,next)=>{
+    try{
+        const events= await Event.find({shopId: req.params.id});
+
+        res.status(201).json({
+            success:true,
+            events,
+        });
+    }catch(error){
+        return next(new ErrorHandler(error,404));
+    }
+});
+
+// delete product of a shop
+router.delete("/delete-shop-event/:id", isSeller,  async(req,res,next)=>{
+    try{
+        const eventId= req.params.id;
+        const eventData= await Event.findById(eventId);
+
+        eventData.images.forEach((imageUrl)=>{
+            const filename = imageUrl;
+            const filePath = `uploads/${filename}`;
+            fs.unlink(filePath, (err) => {
+                if (err) console.log(err);
+            });
+        });
+
+        const event= await Event.findByIdAndDelete(eventId);
+
+        if(!event){
+            return next(new ErrorHandler("Product is not found with this Id!",404));
+        }
+
+        res.status(200).json({
+            success:true,
+            message:"Product deleted successfully",
+        })
+
+    }catch(error){
+        return next(new ErrorHandler(error, 400));
     }
 });
 
