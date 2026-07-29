@@ -6,6 +6,7 @@ const userRouter=require("./controller/user");
 const shopRouter=require("./controller/shop");
 const productRouter=require("./controller/product");
 const eventRouter=require("./controller/event");
+const coupounRouter=require("./controller/coupounCode");
 const cors= require("cors");
 
 //config
@@ -29,6 +30,7 @@ app.use("/api/v2/user",userRouter);
 app.use("/api/v2/shop",shopRouter);
 app.use("/api/v2/product",productRouter);
 app.use("/api/v2/event",eventRouter);
+app.use("/api/v2/coupoun",coupounRouter);
 
 // it's for Errorhandling
 app.use(errorMiddleware);
