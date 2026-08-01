@@ -7,6 +7,8 @@ import {
   AiOutlineMessage,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
+import { Link } from "react-router-dom";
+import { backend_url } from "../../../server";
 
 const ProductDetailsCard = ({ setOpen, data }) => {
   const handleMessageSubmit = () => {};
@@ -27,30 +29,35 @@ const ProductDetailsCard = ({ setOpen, data }) => {
     <div className="bg-[#fff]">
       {data ? (
         <div className="fixed w-full h-screen top-0 left-0 bg-[#00000030] z-40 flex items-center justify-center">
-          <div className="w-[90%] 800px:w-[60%] h-[80vh] overflow-y-auto bg-white rounded-md shadow-sm relative p-4">
+          <div className="w-[90%] 800px:w-[60%] h-[80vh] overflow-y-auto bg-white rounded-md shadow-sm relative p-4 800px:mt-10">
             <RxCross1
               size={22}
-              className="absolute right-3 top-3 z-50"
+              className="absolute right-1 top-3 z-50 800px:right-3"
               onClick={() => setOpen(false)}
             />
             <div className="block w-full 800px:flex">
               <div className="w-full 800px:w-[50%]">
                 <img
-                  src={data.image_Url[0].url}
+                  src={`${backend_url}${data.images && data.images[0]}`}
                   alt="ProductDetailsCardImage"
+                  className="w-[95%] object-cover"
                 />
                 <div className="flex mt-3">
-                  <img
-                    src={data.shop.shop_avatar.url}
-                    alt="shopImage"
-                    className="w-[50px] h-[50px] rounded-full mr-2 mt-2"
-                  />
-                  <div>
-                    <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
-                    <h5 className="pb-5 text-[15px]">
-                      ({data.shop.ratings}) Ratings
-                    </h5>
-                  </div>
+                  <Link to={`/shop/preview/${data.shop._id}`} className="flex mt-3">
+                    <img
+                      src={`${backend_url}${data?.shop?.avatar}`}
+                      alt="shopImage"
+                      className="w-[50px] h-[50px] rounded-full mr-2 mt-3"
+                    />
+                    <div>
+                      <h3 className={`${styles.shop_name}`}>
+                        {data?.shop?.name}
+                      </h3>
+                      <h5 className="pb-5 text-[15px]">
+                        (4/5) Ratings
+                      </h5>
+                    </div>
+                  </Link>
                 </div>
                 <div
                   className={`${styles.button} w-full 800px:w-auto mt-3 rounded-md h-11 px-5 flex items-center justify-center cursor-pointer`}
@@ -62,7 +69,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   </span>
                 </div>
                 <h5 className="text-[16px] text-[red]">
-                  ({data.total_sell}) Sold out
+                  ({data.sold_out}) Sold out
                 </h5>
               </div>
               <div className="w-full 800px:w-[50%] pt-5 pl-[5px] pr-[5px]">
@@ -72,10 +79,10 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                 <p>{data.description}</p>
                 <div className="flex pt-3 mt-2">
                   <h4 className={`${styles.productDiscountPrice}`}>
-                    {data.discount_price}$
+                    {data.discountPrice}$
                   </h4>
                   <h3 className={`${styles.price}`}>
-                    {data.price ? data.price + " $" : null}
+                    {data.originalPrice ? data.originalPrice + " $" : null}
                   </h3>
                 </div>
                 <div className="flex items-center mt-6 justify-between pr-3">
@@ -120,7 +127,7 @@ const ProductDetailsCard = ({ setOpen, data }) => {
                   className={`${styles.button} w-full 800px:w-auto mt-6 rounded-md h-11 px-5 flex items-center justify-center cursor-pointer`}
                 >
                   <span className="text-white flex items-center gap-2 text-sm 800px:text-base font-medium">
-                    Add to cart <AiOutlineShoppingCart/>
+                    Add to cart <AiOutlineShoppingCart />
                   </span>
                 </div>
               </div>

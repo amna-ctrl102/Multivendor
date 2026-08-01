@@ -1,42 +1,59 @@
 import React from "react";
-import styles from "../../styles/styles";
 import CountDown from "./CountDown";
+import { backend_url } from "../../server";
 
-const EventCard = ({active}) => {
+const EventCard = ({ active, data }) => {
+  if (!data) {
+    return null;
+  }
+
+  const imageUrl = data.images?.[0]
+    ? `${backend_url}${data.images[0]}`
+    : "/default-event.png";
+
   return (
-    <div className={`w-full block bg-white rounded-lg ${active? "unset":"mb-12"} lg:flex p-2`}>
-      <div className="w-full lg:w-[50%] m-auto">
+    <div
+      className={`w-full bg-white rounded-lg overflow-hidden lg:flex p-4 gap-4 ${active ? "unset" : "mb-12"}`}
+    >
+      <div className="w-full lg:w-1/2 flex justify-center items-center">
         <img
-          src="https://m.media-amazon.com/images/I/31Vle5fVdaL.jpg"
+          src={imageUrl}
           alt="EventImage"
+          className="w-full max-w-[500px] h-[300px] lg:h-[400px] object-cover rounded-lg"
         />
       </div>
-      <div className="w-full lg:w-[50%] flex flex-col justify-center">
-        <h2 className={`${styles.productTitle}`}>Iphone 41pro max 8/256gb</h2>
-        <p>
-          Experience the perfect blend of performance, style, and innovation
-          with the iPhone. Featuring a stunning display, powerful processor,
-          advanced camera system, and long-lasting battery life, it delivers a
-          smooth and reliable experience for everyday use. Capture high-quality
-          photos and videos, enjoy seamless multitasking, and stay connected
-          with the latest iOS features. Designed with premium materials and
-          built for durability, the iPhone is an excellent choice for work,
-          entertainment, and everything in between.
+      <div className="w-full lg:w-[50%] flex flex-col justify-start p-4 sm:p-6 lg:p-8">
+        <h2 className={`text-xl sm:text-2xl lg:text-3xl font-bold mb-3`}>
+          {data.name}
+        </h2>
+        <p className="text-gray-600 text-sm sm:text-base mb-3">
+          {data.description}
         </p>
-        <div className="flex py-2 justify-between">
-          <div className="flex">
-            <h5 className="font-[500] text-[18px] text-[#d55b45] pr-3 line-through">
-              1099$
+        <div className="flex py-2 justify-between flex-wrap gap-3">
+          <div className="flex items-center flex-wrap">
+            <h5 className="font-[500] text-[15px] 800px:text-[18px] text-[#d55b45] pr-3 line-through">
+              {data.originalPrice ?? 0} $
             </h5>
-            <h5 className="font-bold text-[20px] text-[#333] font-Roboto">
-                999$
+            <h5 className="font-bold text-[18px] 800px:text-[20px] text-[#333] font-Roboto">
+              {data.discountPrice ?? 0} $
             </h5>
           </div>
-          <span className="pr-3 font-[400] text-[17px] text-[#44a55e]">
-            120 Sold
+          <span className="pr-3 font-[400] text-[18px] text-[#44a55e]">
+            {data.sold_out ?? 0} sold
           </span>
         </div>
-        <CountDown/>
+        <div className="mb-5 text-[15px] sm:text-xl">
+          <CountDown data={data} />
+        </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition">
+            See Details
+          </button>
+
+          <button className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition">
+            Add to Cart
+          </button>
+        </div>
       </div>
     </div>
   );

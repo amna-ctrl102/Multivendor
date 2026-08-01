@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/styles";
 import {
@@ -7,12 +7,22 @@ import {
   AiOutlineMessage,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProductsShop } from "../../redux/actions/product";
+import { backend_url } from "../../server";
 
 const ProductDetails = ({ data }) => {
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
+
+  const { products } = useSelector((state) => state.products);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getAllProductsShop(data && data.shop._id));
+  }, [dispatch, data]);
 
   const decrementCount = () => {
     if (count > 1) {
@@ -38,28 +48,31 @@ const ProductDetails = ({ data }) => {
               <div className="w-full 800px:w-[40%]">
                 <div className="w-full border border-gray-300 rounded-lg p-3 mt-3">
                   <img
-                    src={data?.image_Url?.[select]?.url}
+                    src={`${backend_url}${data && data.images[select]}`}
                     alt="Product"
                     className="w-full h-[250px] sm:h-[300px] 800px:h-[330px] object-contain"
                   />
                 </div>
 
                 <div className="flex gap-3 mt-6 overflow-x-auto pb-2">
-                  {data.image_Url.map((item, index) => (
-                    <div
-                      key={index}
-                      onClick={() => setSelect(index)}
-                      className={`cursor-pointer border-2 rounded-lg flex-shrink-0 ${
-                        select === index ? "border-blue-600" : "border-gray-300"
-                      }`}
-                    >
-                      <img
-                        src={item.url}
-                        alt=""
-                        className="w-[80px] h-[80px] 800px:w-[80px] 800px:h-[80px] object-contain rounded-lg"
-                      />
-                    </div>
-                  ))}
+                  {data &&
+                    data.images.map((item, index) => (
+                      <div
+                        key={index}
+                        onClick={() => setSelect(index)}
+                        className={`cursor-pointer border-2 rounded-lg flex-shrink-0 ${
+                          select === index
+                            ? "border-blue-600"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        <img
+                          src={`${backend_url}${item}`}
+                          alt=""
+                          className="w-[80px] h-[80px] 800px:w-[80px] 800px:h-[80px] object-contain rounded-lg"
+                        />
+                      </div>
+                    ))}
                 </div>
               </div>
 
@@ -79,10 +92,10 @@ const ProductDetails = ({ data }) => {
                 {/* Price */}
                 <div className="flex mt-4">
                   <h4 className="text-2xl font-bold text-[#333] font-Roboto">
-                    {data.discount_price}$
+                    {data.discountPrice}$
                   </h4>
                   <h3 className={`${styles.price}`}>
-                    {data.price ? data.price + " $" : null}
+                    {data.originalPrice ? data.originalPrice + " $" : null}
                   </h3>
                 </div>
                 <div className="flex items-center mt-4 justify-between pr-3">
@@ -134,7 +147,7 @@ const ProductDetails = ({ data }) => {
                   {/* Left Side */}
                   <div className="flex items-center">
                     <img
-                      src={data.shop.shop_avatar.url}
+                      src={`${backend_url}${data?.shop?.avatar}`}
                       alt="ShopLogo"
                       className="w-[60px] h-[60px] rounded-full mr-3"
                     />
@@ -144,9 +157,7 @@ const ProductDetails = ({ data }) => {
                         {data.shop.name}
                       </h3>
 
-                      <h5 className="text-[15px]">
-                        ({data.shop.ratings}) Ratings
-                      </h5>
+                      <h5 className="text-[15px]">(4/5) Ratings</h5>
                     </div>
                   </div>
 
@@ -166,12 +177,12 @@ const ProductDetails = ({ data }) => {
           </div>
         )}
       </div>
-      <ProductDetailsInfo data={data} />
+      {data && <ProductDetailsInfo data={data} products={products} />}
     </>
   );
 };
 
-const ProductDetailsInfo = ({ data }) => {
+const ProductDetailsInfo = ({ data, products }) => {
   const [active, setActive] = useState(1);
   return (
     <div className="bg-white w-[95%] max-w-[1400px] shadow-md rounded-xl mt-8 mb-8 mx-auto p-4 800px:p-6">
@@ -213,35 +224,7 @@ const ProductDetailsInfo = ({ data }) => {
       {active === 1 ? (
         <>
           <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
-            Product details are a crucial part of any eCommerce website or
-            online marketplace. These details help the potential customers to
-            make an informed decision about the product they are interested in
-            buying. A well-written product description can also be a powerful
-            marketing tool that can help to increase sales. Product details
-            typically include information about the product's features,
-            specifications, dimensions, weight, materials, and other relevant
-            information that can help language, and be honest and transparent
-            about the product's features and limitations.
-          </p>
-          <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
-            customers to understand the product better. The product details
-            section should also include high-quality images and videos of the
-            product, as well as customer reviews and ratings. When writing
-            product details, it is essential to keep the target audience in
-            mind. The language used should be clear and easy to understand, and
-            technical terms should be explained in simple language. The tone of
-            the product details should be persuasive, highlighting the unique
-            features of the
-          </p>
-          <p className="py-2 text-[18px] leading-8 pb-10 whitespace-pre-line">
-            customers to understand the product better. The product details
-            section should also include high-quality images and videos of the
-            product, as well as customer reviews and ratings. When writing
-            product details, it is essential to keep the target audience in
-            mind. The language used should be clear and easy to understand, and
-            technical terms should be explained in simple language. The tone of
-            the product details should be persuasive, highlighting the unique
-            features of the
+            {data.description}
           </p>
         </>
       ) : null}
@@ -254,9 +237,10 @@ const ProductDetailsInfo = ({ data }) => {
         <div className="w-full flex flex-col 800px:flex-row gap-8 p-5 mt-8">
           {/* Left Section */}
           <div className="w-full 800px:w-[50%]">
-            <div className="flex items-center">
+            <Link to={`/shop/preview/${data.shop._id}`}>
+              <div className="flex items-center">
               <img
-                src={data.shop.shop_avatar.url}
+                src={`${backend_url}${data.shop?.avatar}`}
                 className="w-[60px] h-[60px] rounded-full"
                 alt="ShopLogo"
               />
@@ -266,9 +250,10 @@ const ProductDetailsInfo = ({ data }) => {
                   {data.shop.name}
                 </h3>
 
-                <h5 className="text-[15px]">({data.shop.ratings}) Ratings</h5>
+                <h5 className="text-[15px]">(4/5) Ratings</h5>
               </div>
             </div>
+            </Link>
 
             <p className="pt-4 text-gray-600 leading-7">
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem
@@ -281,11 +266,15 @@ const ProductDetailsInfo = ({ data }) => {
           {/* Right Section */}
           <div className="w-full 800px:w-[40%] ml-auto bg-gray-100 border border-gray-200 rounded-lg p-6">
             <h5 className="font-semibold">
-              Joined on: <span className="font-normal">14 March, 2023</span>
+              Joined on:{" "}
+              <span className="font-normal">
+                {data.shop?.createdAt?.slice(0, 10)}
+              </span>
             </h5>
 
             <h5 className="font-semibold mt-4">
-              Total Products: <span className="font-normal">1,223</span>
+              Total Products:{" "}
+              <span className="font-normal">{products && products.length}</span>
             </h5>
 
             <h5 className="font-semibold mt-4">

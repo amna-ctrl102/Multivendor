@@ -28,7 +28,7 @@ export const createProduct=(newForm)=> async (dispatch)=>{
     }
 };
 
-// get all products
+// get all products of a specific shop
 export const getAllProductsShop=(id)=>async(dispatch)=>{
     try{
         dispatch({
@@ -70,4 +70,27 @@ export const deleteProduct=(id)=>async(dispatch)=>{
             payload: error.response.data.message,
         });
     }
-}
+};
+
+// get products of all shops
+export const getAllProducts=()=>async(dispatch)=>{
+    try{
+        dispatch({
+            type: "getAllProductsRequest",
+        });
+        const {data}= await axios.get(`${server}/product/get-all-products`,{
+            withCredentials: true,
+        });
+        dispatch({
+            type: "getAllProductsSuccess",
+            payload: data.allProducts,
+        });
+
+
+    }catch(error){
+        dispatch({
+            type: "getAllProductsFail",
+            payload: error.response.data.message,
+        });
+    }
+};

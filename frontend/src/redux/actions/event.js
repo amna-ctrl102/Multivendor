@@ -28,7 +28,7 @@ export const createEvent=(newForm)=> async (dispatch)=>{
     }
 };
 
-// get all events
+// get all events of a specfic shop
 export const getAllEventsShop=(id)=>async(dispatch)=>{
     try{
         dispatch({
@@ -70,4 +70,27 @@ export const deleteEvent=(id)=>async(dispatch)=>{
             payload: error.response.data.message,
         });
     }
-}
+};
+
+// get events of all shops
+export const getAllEvents=()=>async(dispatch)=>{
+    try{
+        dispatch({
+            type: "getAllEventsRequest",
+        });
+        const {data}= await axios.get(`${server}/event/get-all-events`,{
+            withCredentials: true,
+        });
+        dispatch({
+            type: "getAllEventsSuccess",
+            payload: data.allEvents,
+        });
+
+
+    }catch(error){
+        dispatch({
+            type: "getAllEventsFail",
+            payload: error.response.data.message,
+        });
+    }
+};

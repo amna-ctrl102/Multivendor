@@ -1,10 +1,19 @@
-import { useState } from "react";
-import { productData } from "../../static/data";
+import { useEffect, useState } from "react";
 import ProductCard from "../Route/ProductCard/ProductCard";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import styles from "../../styles/styles";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllProductsShop } from "../../redux/actions/product";
 
 const ShopProfileData = ({ isOwner }) => {
+  const {products}=useSelector((state)=>state.products);
+  const {id}=useParams();
+  const dispatch=useDispatch();
+
+  useEffect(()=>{
+    dispatch(getAllProductsShop(id));
+  },[id, dispatch])
+
   const [active, setActive] = useState(1);
   return (
     <div className="w-full">
@@ -49,11 +58,16 @@ const ShopProfileData = ({ isOwner }) => {
 
       <br />
       <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-0">
-        {productData &&
-          productData.map((i, index) => (
-            <ProductCard data={i} key={index} isShop={true} />
+        {products &&
+          products.map((i, index) => (
+            <ProductCard data={i} key={index} />
           ))}
       </div>
+      {
+        products && products.length === 0 && (
+          <h5 className="w-full text-center py-5 text-[18px]">No product have for this shop</h5>
+        )
+      }
     </div>
   );
 };

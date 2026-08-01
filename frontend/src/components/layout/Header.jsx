@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
-import { categoriesData, productData } from "../../static/data";
+import { categoriesData } from "../../static/data";
 import {
   AiOutlineHeart,
   AiOutlineSearch,
@@ -20,6 +20,7 @@ import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const{allProducts}=useSelector((state)=>state.products);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -28,13 +29,15 @@ const Header = ({ activeHeading }) => {
   const [openWishList, setOpenWishList] = useState(false);
   const [open, setOpen] = useState(false);
 
+  console.log(allProducts);
+
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
 
     const filteredProduct =
-      productData &&
-      productData.filter((product) => {
+      allProducts &&
+      allProducts.filter((product) => {
         return product.name.toLowerCase().includes(term.toLowerCase());
       });
 
@@ -92,7 +95,7 @@ const Header = ({ activeHeading }) => {
                       <Link to={`/product/${Product_name}`}>
                         <div className="w-full flex items-start py-2">
                           <img
-                            src={i.image_Url[0].url}
+                            src={`${backend_url}${i.images && i.images[0]}`}
                             alt="productImage"
                             className="w-[40px] h-[40px] mr-[10px]"
                           />

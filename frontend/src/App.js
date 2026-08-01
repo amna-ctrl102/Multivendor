@@ -30,13 +30,18 @@ import {
   ShopCreateEventsPage,
   ShopAllEventsPage,
   ShopAllCoupounPage,
+  ShopPreviewPage,
 } from "./routes/ShopRoutes";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute";
+import { getAllProducts } from "./redux/actions/product.js";
+import { getAllEvents } from "./redux/actions/event.js";
 
 const App = () => {
   useEffect(() => {
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
+    Store.dispatch(getAllProducts());
+    Store.dispatch(getAllEvents());
   }, []);
 
   return (
@@ -76,6 +81,7 @@ const App = () => {
         />
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
+        <Route path="/shop/preview/:id" element={<ShopPreviewPage/>} />
         <Route
           path="/shop/:id"
           element={

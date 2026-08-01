@@ -19,7 +19,7 @@ router.post(
         return next(new ErrorHandler("Shop Id is invalid!", 400));
       } else {
         const files = req.files;
-        const imageUrls = files.map((file) => `${file.filename}`);
+        const imageUrls = files.map((file) => `uploads/${file.filename}`);
         const productData = req.body;
         productData.images = imageUrls;
         productData.shop = shop;
@@ -36,6 +36,7 @@ router.post(
   },
 );
 
+// get all products of a specific shop
 router.get("/get-all-products-shop/:id", async (req, res, next) => {
   try {
     const products = await Product.find({ shopId: req.params.id });
@@ -57,7 +58,7 @@ router.delete("/delete-shop-product/:id", isSeller, async (req, res, next) => {
 
     productData.images.forEach((imageUrl) => {
       const filename = imageUrl;
-      const filePath = `uploads/${filename}`;
+      const filePath = `${filename}`;
       fs.unlink(filePath, (err) => {
         if (err) console.log(err);
       });
@@ -75,6 +76,19 @@ router.delete("/delete-shop-product/:id", isSeller, async (req, res, next) => {
   } catch (error) {
     return next(new ErrorHandler(error, 400));
   }
+});
+
+// get products of all shops
+router.get("/get-all-products", async(req,res,next)=>{
+    try{
+        const allProducts = await Product.find();
+        res.status(200).json({
+            success:true,
+            allProducts,
+        });
+    }catch(error){
+        return next(new ErrorHandler(error, 400));
+    }
 });
 
 module.exports = router;
