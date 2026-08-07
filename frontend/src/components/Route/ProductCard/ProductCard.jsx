@@ -11,8 +11,10 @@ import {
   AiOutlineStar,
 } from "react-icons/ai";
 import { backend_url } from "../../../server.js";
+// import { useSelector } from "react-redux";
 
 const ProductCard = ({ data }) => {
+  // const {cart}= useSelector((state)=>state.cart);
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
 

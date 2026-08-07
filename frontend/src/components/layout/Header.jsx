@@ -21,6 +21,7 @@ import { RxCross1 } from "react-icons/rx";
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const{allProducts}=useSelector((state)=>state.products);
+  const{cart}=useSelector((state)=>state.cart);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -28,8 +29,6 @@ const Header = ({ activeHeading }) => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishList, setOpenWishList] = useState(false);
   const [open, setOpen] = useState(false);
-
-  console.log(allProducts);
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
@@ -170,7 +169,7 @@ const Header = ({ activeHeading }) => {
                   color="rgb(255 255 255 /83%)"
                 />
                 <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                  1
+                  {cart && cart.length}
                 </span>
               </div>
             </div>
@@ -237,7 +236,7 @@ const Header = ({ activeHeading }) => {
             >
               <AiOutlineShoppingCart size={28} />
               <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                1
+                {cart && cart.length}
               </span>
             </div>
           </div>
@@ -278,7 +277,7 @@ const Header = ({ activeHeading }) => {
                         <Link to={`/product/${Product_name}`}>
                           <div className="w-full flex items-start py-2">
                             <img
-                              src={i.image_Url[0].url}
+                              src={`${backend_url}${i.images && i.images[0]}`}
                               alt="productImage"
                               className="w-[40px] h-[40px] mr-[10px]"
                             />
