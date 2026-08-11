@@ -8,19 +8,18 @@ import { useSelector } from "react-redux";
 
 const ProductDetailsPage = () => {
   const {allProducts}= useSelector((state)=>state.products)
-  const { name } = useParams();
+  const { id } = useParams();
   const [data, setData] = useState(null);
-  const productName = name.replace(/-/g, " ");
   
   useEffect(() => {
-    const data =allProducts && allProducts.find((i) => i.name.toLowerCase() === productName.toLowerCase());
+    const data =allProducts && allProducts.find((i) => i._id === id);
     setData(data);
 
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
-  }, [productName, allProducts]);
+  }, [id, allProducts]);
 
   return (
     <div>

@@ -6,13 +6,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
 
 const ShopProfileData = ({ isOwner }) => {
-  const {products}=useSelector((state)=>state.products);
-  const {id}=useParams();
-  const dispatch=useDispatch();
+  const { products } = useSelector((state) => state.products);
+  const { id } = useParams();
+  const dispatch = useDispatch();
 
-  useEffect(()=>{
+  useEffect(() => {
     dispatch(getAllProductsShop(id));
-  },[id, dispatch])
+  }, [id, dispatch]);
 
   const [active, setActive] = useState(1);
   return (
@@ -42,32 +42,36 @@ const ShopProfileData = ({ isOwner }) => {
           </div>
         </div>
         <div>
-            {
-                isOwner && (
-                    <div>
-                        <Link to="/dashboard">
-                            <div className={`${styles.button} h-[42px]`}>
-                                <span className="text-[#fff]">Go Dashboard</span>
-                            </div>
-                        </Link>
-                    </div>
-                )
-            }
+          {isOwner && isOwner ? (
+            <div>
+              <Link to="/dashboard">
+                <div className={`${styles.button} h-[42px]`}>
+                  <span className="text-[#fff]">Go to Dashboard</span>
+                </div>
+              </Link>
+            </div>
+          ) : (
+            <div>
+              <Link to="/">
+                <div className={`${styles.button} h-[42px]`}>
+                  <span className="text-[#fff]">Back to Home</span>
+                </div>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
       <br />
       <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-3 lg:gap-[25px] xl:grid-cols-4 xl:gap-[20px] mb-12 border-0">
         {products &&
-          products.map((i, index) => (
-            <ProductCard data={i} key={index} />
-          ))}
+          products.map((i, index) => <ProductCard data={i} key={index} />)}
       </div>
-      {
-        products && products.length === 0 && (
-          <h5 className="w-full text-center py-5 text-[18px]">No product have for this shop</h5>
-        )
-      }
+      {products && products.length === 0 && (
+        <h5 className="w-full text-center py-5 text-[18px]">
+          No product have for this shop
+        </h5>
+      )}
     </div>
   );
 };

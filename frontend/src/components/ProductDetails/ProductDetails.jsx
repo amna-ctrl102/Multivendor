@@ -10,7 +10,10 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
 import { backend_url } from "../../server";
-import { addToWishlist, removeFromWishlist } from "../../redux/actions/wishlist";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../redux/actions/wishlist";
 import { addToCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 
@@ -44,37 +47,37 @@ const ProductDetails = ({ data }) => {
   };
 
   const addToCartHandler = (id) => {
-      const isItemExists = cart && cart.find((i) => i._id === id);
-      if (isItemExists) {
-        toast.error("Item is already in cart!");
+    const isItemExists = cart && cart.find((i) => i._id === id);
+    if (isItemExists) {
+      toast.error("Item is already in cart!");
+    } else {
+      if (data.stock < count) {
+        toast.error("product stock limited!");
       } else {
-        if (data.stock < count) {
-          toast.error("product stock limited!");
-        } else {
-          const cartData = { ...data, qty: count };
-          dispatch(addToCart(cartData));
-          toast.success("Item added to cart successfully!");
-        }
+        const cartData = { ...data, qty: count };
+        dispatch(addToCart(cartData));
+        toast.success("Item added to cart successfully!");
       }
-    };
-  
-    useEffect(() => {
-      if (data && wishlist && wishlist.find((i) => i?._id === data._id)) {
-        setClick(true);
-      } else {
-        setClick(false);
-      }
-    }, [wishlist, data]);
-  
-    const removeFromWishlistHandler = (data) => {
-      setClick(!click);
-      dispatch(removeFromWishlist(data));
-    };
-  
-    const addToWishlistHandler = (data) => {
-      setClick(!click);
-      dispatch(addToWishlist(data));
-    };
+    }
+  };
+
+  useEffect(() => {
+    if (data && wishlist && wishlist.find((i) => i?._id === data._id)) {
+      setClick(true);
+    } else {
+      setClick(false);
+    }
+  }, [wishlist, data]);
+
+  const removeFromWishlistHandler = (data) => {
+    setClick(!click);
+    dispatch(removeFromWishlist(data));
+  };
+
+  const addToWishlistHandler = (data) => {
+    setClick(!click);
+    dispatch(addToWishlist(data));
+  };
 
   return (
     <>
@@ -184,21 +187,23 @@ const ProductDetails = ({ data }) => {
                 </div>
                 <div className="bg-gray-50 border border-gray-200 rounded-lg mt-8 p-4 flex flex-col 800px:flex-row 800px:items-center justify-between gap-4">
                   {/* Left Side */}
-                  <div className="flex items-center">
-                    <img
-                      src={`${backend_url}${data?.shop?.avatar}`}
-                      alt="ShopLogo"
-                      className="w-[60px] h-[60px] rounded-full mr-3"
-                    />
+                  <Link to={`/shop/preview/${data?.shop._id}`}>
+                    <div className="flex items-center">
+                      <img
+                        src={`${backend_url}${data?.shop?.avatar}`}
+                        alt="ShopLogo"
+                        className="w-[60px] h-[60px] rounded-full mr-3"
+                      />
 
-                    <div>
-                      <h3 className="text-[#333] font-semibold text-[18px] font-Roboto">
-                        {data.shop.name}
-                      </h3>
+                      <div>
+                        <h3 className="text-[#333] font-semibold text-[18px] font-Roboto">
+                          {data.shop.name}
+                        </h3>
 
-                      <h5 className="text-[15px]">(4/5) Ratings</h5>
+                        <h5 className="text-[15px]">(4/5) Ratings</h5>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
 
                   {/* Right Side */}
                   <div
@@ -276,22 +281,22 @@ const ProductDetailsInfo = ({ data, products }) => {
         <div className="w-full flex flex-col 800px:flex-row gap-8 p-5 mt-8">
           {/* Left Section */}
           <div className="w-full 800px:w-[50%]">
-            <Link to={`/shop/preview/${data.shop._id}`}>
+            <Link to={`/shop/preview/${data?.shop._id}`}>
               <div className="flex items-center">
-              <img
-                src={`${backend_url}${data.shop?.avatar}`}
-                className="w-[60px] h-[60px] rounded-full"
-                alt="ShopLogo"
-              />
+                <img
+                  src={`${backend_url}${data.shop?.avatar}`}
+                  className="w-[60px] h-[60px] rounded-full"
+                  alt="ShopLogo"
+                />
 
-              <div className="pl-3">
-                <h3 className="text-[#333] font-semibold text-[18px] font-Roboto">
-                  {data.shop.name}
-                </h3>
+                <div className="pl-3">
+                  <h3 className="text-[#333] font-semibold text-[18px] font-Roboto">
+                    {data.shop.name}
+                  </h3>
 
-                <h5 className="text-[15px]">(4/5) Ratings</h5>
+                  <h5 className="text-[15px]">(4/5) Ratings</h5>
+                </div>
               </div>
-            </div>
             </Link>
 
             <p className="pt-4 text-gray-600 leading-7">

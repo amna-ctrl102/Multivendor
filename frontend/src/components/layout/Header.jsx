@@ -89,10 +89,8 @@ const Header = ({ activeHeading }) => {
               <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-2">
                 {searchData &&
                   searchData.map((i, index) => {
-                    const d = i.name;
-                    const Product_name = d.replace(/\s+/g, "-");
                     return (
-                      <Link to={`/product/${Product_name}`}>
+                      <Link to={`/product/${i._id}`}>
                         <div className="w-full flex items-start py-2">
                           <img
                             src={`${backend_url}${i.images && i.images[0]}`}
@@ -272,10 +270,8 @@ const Header = ({ activeHeading }) => {
                 <div className="absolute w-full bg-white shadow-md rounded-md z-[10] left-0 p-3">
                   {searchData &&
                     searchData.map((i, index) => {
-                      const d = i.name;
-                      const Product_name = d.replace(/\s+/g, "-");
                       return (
-                        <Link to={`/product/${Product_name}`}>
+                        <Link to={`/product/${i._id}`}>
                           <div className="w-full flex items-start py-2">
                             <img
                               src={`${backend_url}${i.images && i.images[0]}`}
