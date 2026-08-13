@@ -1,29 +1,74 @@
-import { useSelector } from "react-redux";
-import { backend_url } from "../../server";
+import { useDispatch, useSelector } from "react-redux";
+import { backend_url, server } from "../../server";
 import {
   AiOutlineArrowRight,
   AiOutlineCamera,
   AiOutlineDelete,
 } from "react-icons/ai";
 import styles from "../../styles/styles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MdOutlineTrackChanges } from "react-icons/md";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { updateUserInformation } from "../../redux/actions/user";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const ProfileContent = ({ active }) => {
   const { user } = useSelector((state) => state.user);
-  const [name, setName] = useState(user && user.name);
-  const [email, setEmail] = useState(user && user.email);
-  const [phoneNumber, setPhoneNumber] = useState();
-  const [zipCode, setZipCode] = useState();
-  const [address1, setAddress1] = useState();
-  const [address2, setAddress2] = useState();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  // const [zipCode, setZipCode] = useState();
+  // const [address1, setAddress1] = useState();
+  // const [address2, setAddress2] = useState();
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name ?? "");
+      setEmail(user.email ?? "");
+      setPhoneNumber(user.phoneNumber ?? "");
+    }
+  }, [user]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    try {
+      dispatch(updateUserInformation(name, email, phoneNumber, password));
+      toast.success("User updated successfully!");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
+    }
   };
+  const handleImage = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const res = await axios.put(`${server}/user/update-avatar`, formData, {
+        withCredentials: true,
+      });
+      console.log(res.data);
+      window.location.reload();
+
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
+    }
+  };
+
   return (
     <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-8 mt-16 800px:mt-0">
       {active === 1 && (
@@ -36,7 +81,16 @@ const ProfileContent = ({ active }) => {
                 className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border-[3px] border-[#3ad132]"
               />
               <div className="w-[40px] h-[40px] bg-[#3ad132] rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">
-                <AiOutlineCamera size={25} color="white" />
+                <input
+                  type="file"
+                  name="image"
+                  id="image"
+                  className="hidden"
+                  onChange={handleImage}
+                />
+                <label htmlFor="image">
+                  <AiOutlineCamera size={25} color="white" />
+                </label>
               </div>
             </div>
           </div>
@@ -78,35 +132,13 @@ const ProfileContent = ({ active }) => {
                   />
                 </div>
                 <div className="w-[100%] 800px:w-[50%]">
-                  <label className="block pb-2">Zip Code</label>
+                  <label className="block pb-2">Enter Your Password </label>
                   <input
-                    type="number"
+                    type="password"
                     className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132] mb-6 800px:mb-0`}
                     required
-                    value={zipCode}
-                    onChange={(e) => setZipCode(e.target.value)}
-                  />
-                </div>
-              </div>
-              <div className="w-full flex flex-col md:flex-row gap-5 md:gap-10 md:mt-5">
-                <div className="w-[100%] 800px:w-[50%]">
-                  <label className="block pb-2">Address1</label>
-                  <input
-                    type="address"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
-                    required
-                    value={address1}
-                    onChange={(e) => setAddress1(e.target.value)}
-                  />
-                </div>
-                <div className="w-[100%] 800px:w-[50%]">
-                  <label className="block pb-2">Address2</label>
-                  <input
-                    type="address"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
-                    required
-                    value={address2}
-                    onChange={(e) => setAddress2(e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                 </div>
               </div>

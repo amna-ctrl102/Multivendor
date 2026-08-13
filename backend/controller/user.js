@@ -9,7 +9,6 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
 const { isAuthenticated } = require("../middleware/auth");
-// const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
@@ -49,7 +48,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
       return next(new ErrorHandler(error.message, 500));
     }
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
@@ -62,95 +61,157 @@ const createActivationToken = (user) => {
 
 // activate user
 router.post("/activation", async (req, res, next) => {
-    try {
-      const { activation_token } = req.body;
+  try {
+    const { activation_token } = req.body;
 
-      const newUser = jwt.verify(
-        activation_token,
-        process.env.ACTIVATION_SECRET,
-      );
+    const newUser = jwt.verify(activation_token, process.env.ACTIVATION_SECRET);
 
-      if (!newUser) {
-        return next(new ErrorHandler("Invalid token", 400));
-      }
-
-      const { name, email, password, avatar } = newUser;
-
-      let user = await User.findOne({ email });
-      if (user) {
-        return next(new ErrorHandler("User already exits",400));
-      }
-      user=await User.create({
-        name,
-        email,
-        password,
-        avatar,
-      });
-      sendToken(user,201,res);
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
+    if (!newUser) {
+      return next(new ErrorHandler("Invalid token", 400));
     }
+
+    const { name, email, password, avatar } = newUser;
+
+    let user = await User.findOne({ email });
+    if (user) {
+      return next(new ErrorHandler("User already exits", 400));
+    }
+    user = await User.create({
+      name,
+      email,
+      password,
+      avatar,
+    });
+    sendToken(user, 201, res);
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
 });
 
 // Login user
-router.post("/login-user",async(req,res,next)=>{
-    try{
-        const {email,password}=req.body;
-        if(!email || !password){
-            return next(new ErrorHandler("Please provide the all fields",400));
-        }
-        const user=await User.findOne({email}).select("+password");
-
-        if(!user){
-            return next(new ErrorHandler("User doesn't exists",400));
-        }
-        
-        const isPasswordValid= await user.comparePassword(password);
-
-        if(!isPasswordValid){
-            return next(new ErrorHandler("Please provide correct information",400));
-        }
-
-        sendToken(user,201,res);
-
-    }catch(error){
-        return next(new ErrorHandler(error.message,500));
+router.post("/login-user", async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return next(new ErrorHandler("Please provide the all fields", 400));
     }
-})
+    const user = await User.findOne({ email }).select("+password");
 
-//load user
-router.get("/getuser", isAuthenticated, async(req,res,next)=>{
-    try{
-        const user =await User.findById(req.user._id);
-
-        if(!user){
-            return next(new ErrorHandler("User doesn't exists",400));
-        }
-
-        res.status(200).json({
-            success:true,
-            user,
-        })
-
-    }catch(error){
-        return next(new ErrorHandler(error.message,500));
+    if (!user) {
+      return next(new ErrorHandler("User doesn't exists", 400));
     }
+
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return next(new ErrorHandler("Please provide correct information", 400));
+    }
+
+    sendToken(user, 201, res);
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
 });
 
-router.get("/logout", isAuthenticated,async(req,res,next)=>{
-  try{
-    res.cookie("token",null,{
+//load user
+router.get("/getuser", isAuthenticated, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return next(new ErrorHandler("User doesn't exists", 400));
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+router.get("/logout", isAuthenticated, async (req, res, next) => {
+  try {
+    res.cookie("token", null, {
       expires: new Date(Date.now()),
       httpOnly: true,
     });
 
     res.status(200).json({
-      success:true,
+      success: true,
       message: "Log out Successfull!",
-    })
-  }catch(error){
-    return next(new ErrorHandler(error.message,500));
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
   }
-})
+});
+
+// update user controller
+router.put("/update-user-info", isAuthenticated, async (req, res, next) => {
+  try {
+    const { name, email, password, phoneNumber } = req.body;
+    const user = await User.findById(req.user._id).select("+password");
+    
+    if (!user) {
+      return next(new ErrorHandler("User doesn't exists", 400));
+    }
+
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return next(new ErrorHandler("Please provide correct information", 400));
+    }
+
+    user.name= name;
+    user.email= email;
+    user.phoneNumber= phoneNumber;
+   
+    await user.save();
+    res.status(201).json({
+      success:true,
+      user,
+    })
+
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
+
+// update user avatar
+router.put("/update-avatar", isAuthenticated, upload.single("image"), async(req,res,next)=>{
+  try{
+
+    const existUser= await User.findById(req.user._id);
+    if (!existUser) {
+      return next(new ErrorHandler("User doesn't exist", 400));
+    }
+
+    if (!req.file) {
+      return next(new ErrorHandler("Please upload an image", 400));
+    }
+
+    const existAvatarPath = existUser.avatar;
+
+    fs.unlink(existAvatarPath, (err) => {
+      if (err) console.log(err);
+    });
+
+    const filename = req.file.filename;
+    const fileUrl = path.join("uploads", filename);
+
+    const user= await User.findByIdAndUpdate(req.user._id,{
+      avatar: fileUrl,
+    },{
+      returnDocument: "after",
+    })
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+
+  }catch(error){
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
 
 module.exports = router;
