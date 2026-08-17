@@ -285,4 +285,31 @@ router.delete(
   },
 );
 
+// upadate user password
+router.put("/update-password", isAuthenticated, async(req,res,next)=>{
+  try{
+    const user= await User.findById(req.user._id).select("+password");
+
+    const isPassword= await user.comparePassword(req.body.oldPassword);
+    if(!isPassword){
+      return next(new ErrorHandler("Old password is incorrect!", 404));
+    }
+
+    if(req.body.newPassword !== req.body.confirmPassword){
+      return next(new ErrorHandler("Password doesn't match with each other", 404));
+    }
+
+    user.password=req.body.newPassword;
+    await user.save();
+
+    res.status(200).json({
+      success:true,
+      message:"Password updated successfully!",
+    })
+
+  }catch(error){
+    return next(new ErrorHandler(error.message, 500));
+  }
+})
+
 module.exports = router;

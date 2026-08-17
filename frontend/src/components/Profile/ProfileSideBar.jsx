@@ -1,6 +1,5 @@
 import { MdOutlineTrackChanges } from "react-icons/md";
 import {
-  AiOutlineCreditCard,
   AiOutlineLogin,
   AiOutlineMessage,
 } from "react-icons/ai";
@@ -8,6 +7,7 @@ import { HiOutlineReceiptRefund } from "react-icons/hi";
 import { IoBagHandleOutline } from "react-icons/io5";
 import { TbAddressBook } from "react-icons/tb";
 import { RxPerson } from "react-icons/rx";
+import { RiLockPasswordLine } from "react-icons/ri";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -104,11 +104,11 @@ const ProfileSideBar = ({ active, setActive }) => {
           setActive(6);
         }}
       >
-        <AiOutlineCreditCard size={20} color={active === 6 ? "red" : ""} />
+        <RiLockPasswordLine size={20} color={active === 6 ? "red" : ""} />
         <span
           className={`pl-3 font-Roboto text-[18px] ${active === 6 ? "text-[red]" : ""} 800px:block hidden`}
         >
-          Payment Methods
+          Change Password
         </span>
       </div>
 

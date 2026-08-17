@@ -72,7 +72,7 @@ const ProfileContent = ({ active }) => {
   };
 
   return (
-    <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-8 mt-16 800px:mt-0">
+    <div className="w-full bg-white shadow-md rounded-[10px] p-4 pt-6 mt-16 800px:mt-0">
       {active === 1 && (
         <>
           <div className="flex justify-center w-full">
@@ -98,7 +98,7 @@ const ProfileContent = ({ active }) => {
           </div>
           <br />
           <br />
-          <div className="w-full px-2 md:px-5">
+          <div className="w-full md:px-5">
             <form onSubmit={handleSubmit}>
               <div className="w-full flex flex-col md:flex-row gap-5 md:gap-10">
                 <div className="w-[100%] 800px:w-[50%]">
@@ -174,7 +174,7 @@ const ProfileContent = ({ active }) => {
       )}
       {active === 6 && (
         <div>
-          <PaymentMethod />
+          <ChangePassword />
         </div>
       )}
       {active === 7 && (
@@ -260,11 +260,11 @@ const AllOrders = () => {
     });
 
   return (
-    <div className="pl-8 pt-1">
+    <div>
       <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
         My Orders
       </h1>
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto pt-2">
         <div style={{ minWidth: "850px" }}>
           <DataGrid rows={row} columns={columns} pageSize={10} autoHeight />
         </div>
@@ -347,11 +347,11 @@ const AllRefundOrders = () => {
     });
 
   return (
-    <div className="pl-8 pt-1">
+    <div>
       <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
         Refund Requests
       </h1>
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto pt-2">
         <div style={{ minWidth: "850px" }}>
           <DataGrid rows={row} columns={columns} pageSize={10} autoHeight />
         </div>
@@ -434,11 +434,11 @@ const TrackOrders = () => {
     });
 
   return (
-    <div className="pl-8 pt-1">
+    <div>
       <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
         Track Your Orders
       </h1>
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto pt-2">
         <div style={{ minWidth: "850px" }}>
           <DataGrid rows={row} columns={columns} pageSize={10} autoHeight />
         </div>
@@ -447,34 +447,85 @@ const TrackOrders = () => {
   );
 };
 
-const PaymentMethod = () => {
+const ChangePassword = () => {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const passwordChangeHandler = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await axios.put(
+        `${server}/user/update-password`,
+        { oldPassword, newPassword, confirmPassword },
+        {
+          withCredentials: true,
+        },
+      );
+      toast.success(res.data.message);
+      setOldPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
+    }
+  };
+
   return (
-    <div className="w-full px-5">
-      <div className="w-full flex items-center justify-between">
-        <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
-          Payment Methods
-        </h1>
-        <div className={`${styles.button} rounded-md`}>
-          <span className="text-[#fff]">Add New</span>
-        </div>
-      </div>
+    <div className="w-full">
+      <h1 className="text-[22px] 800px:text-[25px] text-center font-[600] text-[#000000ba] pb-2">
+        Change Password
+      </h1>
       <br />
-      <div className="w-full bg-white rounded-md p-4 shadow flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex items-center">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIm-CDW8sxq_bPRtnasu58FbGuuAP-daD2QWaeWDvTtQ&s=10"
-            alt=""
-            className="w-[50px] h-[50px]"
-          />
-          <h5 className="pl-5 font-[600]">Amna Atiq</h5>
-        </div>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-6">
-          <h6>1234 **** **** ****</h6>
-          <h5 className="sm:pl-10">03/2026</h5>
-        </div>
-        <div className="min-w-[10%] flex justify-end md:justify-center pl-8">
-          <AiOutlineDelete size={25} className="cursor-pointer" />
-        </div>
+      <div className="w-full md:px-5">
+        <form onSubmit={passwordChangeHandler}>
+          <div className="w-full flex flex-col justify-center items-center">
+            <div className="w-[100%] 800px:w-[80%] pb-5">
+              <label className="block pb-2">Old Password</label>
+              <input
+                type="password"
+                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                required
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+              />
+            </div>
+            <div className="w-[100%] 800px:w-[80%] pb-5">
+              <label className="block pb-2">New Password</label>
+              <input
+                type="password"
+                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                required
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
+            <div className="w-[100%] 800px:w-[80%] pb-5">
+              <label className="block pb-2">Confirm Password</label>
+              <input
+                type="password"
+                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
+            <div className="w-full flex justify-center mt-3 mb-7">
+              <button
+                className="text-sm 800px:text-lg w-full sm:w-[80%] h-12 flex items-center justify-center bg-[#3ad132] text-white rounded-lg uppercase font-semibold hover:opacity-95 hover:shadow-md transition disabled:opacity-80"
+                type="submit"
+              >
+                Update Password
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -578,7 +629,6 @@ const Address = () => {
                     <label className="block pb-2">Country</label>
                     <select
                       value={country}
-                      required
                       onChange={(e) => setCountry(e.target.value)}
                       className="w-[95%] border p-3 rounded-[5px]"
                     >
@@ -602,7 +652,6 @@ const Address = () => {
                     <label className="block pb-2">City</label>
                     <select
                       value={city}
-                      required
                       onChange={(e) => setCity(e.target.value)}
                       className="w-[95%] border p-3 rounded-[5px]"
                     >
@@ -627,7 +676,6 @@ const Address = () => {
                     <input
                       type="address"
                       name="address1"
-                      required
                       value={address1}
                       placeholder="Enter your address 1"
                       className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
@@ -635,7 +683,7 @@ const Address = () => {
                     />
                   </div>
                   <div className="w-full pl-5 pb-3">
-                    <label className="block pb-2">Address 2</label>
+                    <label className="block pb-2">Address 2(optional)</label>
                     <input
                       type="address"
                       name="address2"
@@ -650,7 +698,6 @@ const Address = () => {
                     <input
                       type="number"
                       name="zipCode"
-                      required
                       value={zipCode}
                       placeholder="Enter your zip code"
                       className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
@@ -661,7 +708,6 @@ const Address = () => {
                     <label className="block pb-2">Address Type</label>
                     <select
                       value={addressType}
-                      required
                       onChange={(e) => setAddressType(e.target.value)}
                       className="w-[95%] border p-3 rounded-[5px]"
                     >
@@ -740,13 +786,11 @@ const Address = () => {
             </div>
           </div>
         ))}
-        {
-          user && user.addresses.length === 0 && (
-            <h5 className="text-center pb-10 text-[18px]">
-              You not have any saved address!
-            </h5>
-          )
-        }
+      {user && user.addresses.length === 0 && (
+        <h5 className="text-center pb-10 text-[18px]">
+          You not have any saved address!
+        </h5>
+      )}
     </div>
   );
 };
