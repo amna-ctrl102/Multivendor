@@ -146,12 +146,12 @@ router.get("/logout", isAuthenticated, async (req, res, next) => {
   }
 });
 
-// update user controller
+// update user information
 router.put("/update-user-info", isAuthenticated, async (req, res, next) => {
   try {
     const { name, email, password, phoneNumber } = req.body;
     const user = await User.findById(req.user._id).select("+password");
-    
+
     if (!user) {
       return next(new ErrorHandler("User doesn't exists", 400));
     }
@@ -161,57 +161,128 @@ router.put("/update-user-info", isAuthenticated, async (req, res, next) => {
       return next(new ErrorHandler("Please provide correct information", 400));
     }
 
-    user.name= name;
-    user.email= email;
-    user.phoneNumber= phoneNumber;
-   
+    user.name = name;
+    user.email = email;
+    user.phoneNumber = phoneNumber;
+
     await user.save();
     res.status(201).json({
-      success:true,
+      success: true,
       user,
-    })
-
+    });
   } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
 });
 
 // update user avatar
-router.put("/update-avatar", isAuthenticated, upload.single("image"), async(req,res,next)=>{
-  try{
+router.put(
+  "/update-avatar",
+  isAuthenticated,
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      const existUser = await User.findById(req.user._id);
+      if (!existUser) {
+        return next(new ErrorHandler("User doesn't exist", 400));
+      }
 
-    const existUser= await User.findById(req.user._id);
-    if (!existUser) {
-      return next(new ErrorHandler("User doesn't exist", 400));
+      if (!req.file) {
+        return next(new ErrorHandler("Please upload an image", 400));
+      }
+
+      const existAvatarPath = existUser.avatar;
+
+      fs.unlink(existAvatarPath, (err) => {
+        if (err) console.log(err);
+      });
+
+      const filename = req.file.filename;
+      const fileUrl = path.join("uploads", filename);
+
+      const user = await User.findByIdAndUpdate(
+        req.user._id,
+        {
+          avatar: fileUrl,
+        },
+        {
+          returnDocument: "after",
+        },
+      );
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
     }
+  },
+);
 
-    if (!req.file) {
-      return next(new ErrorHandler("Please upload an image", 400));
+// update user addresses
+router.put(
+  "/update-user-addresses",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+
+      const sameAddressType = user.addresses.find(
+        (address) => address.addressType === req.body.addressType,
+      );
+
+      if (sameAddressType) {
+        return next(
+          new ErrorHandler(
+            `${req.body.addressType} address already exists`,
+            400,
+          ),
+        );
+      }
+
+      user.addresses.push(req.body);
+
+      await user.save();
+
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
     }
+  },
+);
 
-    const existAvatarPath = existUser.avatar;
+// delete user address
+router.delete(
+  "/delete-user-address/:id",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const userId = req.user._id;
+      const addressId = req.params.id;
 
-    fs.unlink(existAvatarPath, (err) => {
-      if (err) console.log(err);
-    });
+      await User.updateOne(
+        {
+          _id: userId,
+        },
+        {
+          $pull: { addresses: { _id: addressId } },
+        },
+      );
 
-    const filename = req.file.filename;
-    const fileUrl = path.join("uploads", filename);
+      const user= await User.findById(userId);
+      res.status(200).json({
+        success: true,
+        user,
+      })
 
-    const user= await User.findByIdAndUpdate(req.user._id,{
-      avatar: fileUrl,
-    },{
-      returnDocument: "after",
-    })
-
-    res.status(200).json({
-      success: true,
-      user,
-    });
-
-  }catch(error){
-    return next(new ErrorHandler(error.message, 500));
-  }
-});
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
+);
 
 module.exports = router;

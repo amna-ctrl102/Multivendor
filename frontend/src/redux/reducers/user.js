@@ -19,7 +19,6 @@ export const userReducer = createReducer(initialState, (builder) => {
             state.isAuthenticated = false;
             state.loading = false;
             state.error = action.payload;
-            state.user = null;
         })
         .addCase("LogoutSuccess", (state) => {
             state.isAuthenticated = false;
@@ -39,8 +38,34 @@ export const userReducer = createReducer(initialState, (builder) => {
         .addCase("updateUserInfoFail", (state, action) => {
             state.loading = false;
             state.error = action.payload;
-            state.user = null;
         })
+
+        // update user address
+        .addCase("updateUserAddressRequest", (state) => {
+            state.addressLoading = true;
+        })
+        .addCase("updateUserAddressSuccess", (state, action) => {
+            state.addressLoading = false;
+            state.user = action.payload;
+        })
+        .addCase("updateUserAddressFail", (state, action) => {
+            state.addressLoading = false;
+            state.error = action.payload;
+        })
+
+        // Delete user Address
+        .addCase("deleteUserAddressRequest", (state) => {
+            state.addressLoading = true;
+        })
+        .addCase("deleteUserAddressSuccess", (state, action) => {
+            state.addressLoading = false;
+            state.user = action.payload;
+        })
+        .addCase("deleteUserAddressFail", (state, action) => {
+            state.addressLoading = false;
+            state.error = action.payload;
+        })
+
         .addCase("clearError", (state) => {
             state.error = null;
         });

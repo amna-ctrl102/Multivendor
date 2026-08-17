@@ -11,7 +11,7 @@ const sendToken=(user,statusCode,res)=>{
     };
     res.status(statusCode).cookie("token", token, options).json({
         success:true,
-         message: "User activated successfully",
+        message: "User activated successfully",
         token,
         user,
     });

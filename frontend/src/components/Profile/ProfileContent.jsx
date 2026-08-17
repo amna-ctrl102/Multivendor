@@ -11,9 +11,15 @@ import { Link } from "react-router-dom";
 import { MdOutlineTrackChanges } from "react-icons/md";
 import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { updateUserInformation } from "../../redux/actions/user";
+import {
+  deleteUserAddress,
+  updateUserAddress,
+  updateUserInformation,
+} from "../../redux/actions/user";
+import { Country, State } from "country-state-city";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { RxCross1 } from "react-icons/rx";
 
 const ProfileContent = ({ active }) => {
   const { user } = useSelector((state) => state.user);
@@ -22,9 +28,6 @@ const ProfileContent = ({ active }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  // const [zipCode, setZipCode] = useState();
-  // const [address1, setAddress1] = useState();
-  // const [address2, setAddress2] = useState();
 
   useEffect(() => {
     if (user) {
@@ -59,7 +62,6 @@ const ProfileContent = ({ active }) => {
       });
       console.log(res.data);
       window.location.reload();
-
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -479,41 +481,272 @@ const PaymentMethod = () => {
 };
 
 const Address = () => {
+  const [open, setOpen] = useState(false);
+  const [country, setCountry] = useState("");
+  const [city, setCity] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [address1, setAddress1] = useState("");
+  const [address2, setAddress2] = useState("");
+  const [addressType, setAddressType] = useState("");
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
+
+  const addressTypeData = [
+    {
+      name: "Default",
+    },
+    {
+      name: "Home",
+    },
+    {
+      name: "Office",
+    },
+  ];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (
+        addressType === "" ||
+        city === "" ||
+        country === "" ||
+        address1 === "" ||
+        zipCode === ""
+      ) {
+        toast.error("Please fill the all fields!");
+      } else {
+        await dispatch(
+          updateUserAddress(
+            country,
+            city,
+            address1,
+            address2,
+            zipCode,
+            addressType,
+          ),
+        );
+        toast.success("Address saved successfully!");
+        setOpen(false);
+        setCountry("");
+        setCity("");
+        setAddress1("");
+        setAddress2("");
+        setZipCode("");
+        setAddressType("");
+      }
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
+    }
+  };
+
+  const handleDeleteAddress = async (item) => {
+    try {
+      await dispatch(deleteUserAddress(item._id));
+      toast.success("Address deleted successfully!");
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message ||
+          error.message ||
+          "Something went wrong",
+      );
+    }
+  };
+
   return (
-    <div className="w-full px-5">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
+    <div className="w-full">
+      {open && (
+        <div className="fixed inset-0 z-[9999] h-screen bg-[#0000004b] flex items-center justify-center">
+          <div className="w-[90%] 800px:w-[40%] h-[90vh] bg-white rounded-md shadow-md relative overflow-y-auto">
+            <div className="w-full flex justify-end pt-4 pr-4">
+              <RxCross1
+                size={25}
+                className="cursor-pointer"
+                onClick={() => setOpen(false)}
+              />
+            </div>
+            <h1 className="text-center text-[20px] 800px:text-[25px] font-Poppins">
+              Add New Address
+            </h1>
+            <div className="w-full">
+              <form onSubmit={handleSubmit}>
+                <div className="w-full p-3">
+                  <div className="w-full pl-5 pb-3">
+                    <label className="block pb-2">Country</label>
+                    <select
+                      value={country}
+                      required
+                      onChange={(e) => setCountry(e.target.value)}
+                      className="w-[95%] border p-3 rounded-[5px]"
+                    >
+                      <option value="" className="block pb-2">
+                        Choose your country
+                      </option>
+                      {Country &&
+                        Country.getAllCountries().map((item) => (
+                          <option
+                            className="block pb-2"
+                            key={item.isoCode}
+                            value={item.isoCode}
+                          >
+                            {item.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+
+                  <div className="w-full pl-5 pb-3">
+                    <label className="block pb-2">City</label>
+                    <select
+                      value={city}
+                      required
+                      onChange={(e) => setCity(e.target.value)}
+                      className="w-[95%] border p-3 rounded-[5px]"
+                    >
+                      <option value="" className="block pb-2">
+                        Choose your city
+                      </option>
+                      {country &&
+                        State &&
+                        State.getStatesOfCountry(country).map((item) => (
+                          <option
+                            className="block pb-2"
+                            key={item.isoCode}
+                            value={item.isoCode}
+                          >
+                            {item.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <div className="w-full pl-5 pb-3">
+                    <label className="block pb-2">Address 1</label>
+                    <input
+                      type="address"
+                      name="address1"
+                      required
+                      value={address1}
+                      placeholder="Enter your address 1"
+                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                      onChange={(e) => setAddress1(e.target.value)}
+                    />
+                  </div>
+                  <div className="w-full pl-5 pb-3">
+                    <label className="block pb-2">Address 2</label>
+                    <input
+                      type="address"
+                      name="address2"
+                      value={address2}
+                      placeholder="Enter your address 2"
+                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                      onChange={(e) => setAddress2(e.target.value)}
+                    />
+                  </div>
+                  <div className="w-full pl-5 pb-3">
+                    <label className="block pb-2">Zip Code</label>
+                    <input
+                      type="number"
+                      name="zipCode"
+                      required
+                      value={zipCode}
+                      placeholder="Enter your zip code"
+                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                      onChange={(e) => setZipCode(e.target.value)}
+                    />
+                  </div>
+                  <div className="w-full pl-5 pb-5">
+                    <label className="block pb-2">Address Type</label>
+                    <select
+                      value={addressType}
+                      required
+                      onChange={(e) => setAddressType(e.target.value)}
+                      className="w-[95%] border p-3 rounded-[5px]"
+                    >
+                      <option value="" className="block pb-2">
+                        Choose your address type
+                      </option>
+                      {addressTypeData &&
+                        addressTypeData.map((item) => (
+                          <option
+                            className="block pb-2"
+                            key={item.name}
+                            value={item.name}
+                          >
+                            {item.name}
+                          </option>
+                        ))}
+                    </select>
+                  </div>
+                  <div className="w-full pl-5 pb-3">
+                    <button
+                      className="w-[95%] h-12 flex items-center justify-center bg-[#3ad132] text-white rounded-lg uppercase font-semibold hover:opacity-95 hover:shadow-md transition disabled:opacity-80"
+                      type="submit"
+                    >
+                      Save Address
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="flex flex-col items-center 800px:flex-row 800px:items-center 800px:justify-between gap-5 mb-6">
+        <h1 className="text-[25px] 800px:text-[28px] font-[600] text-[#000000ba] text-center 800px:text-left">
           My Addresses
         </h1>
 
-        <div className={`${styles.button} rounded-md`}>
-          <span className="text-[#fff]">Add New</span>
+        <div className="w-full 800px:w-auto" onClick={() => setOpen(true)}>
+          <button className="w-full 800px:w-[180px] h-[50px] bg-black text-white rounded-[10px] font-[600] hover:opacity-90 transition">
+            Add New
+          </button>
         </div>
       </div>
 
       <br />
+      {user &&
+        user.addresses.map((item) => (
+          <div
+            key={item._id}
+            className="w-full mx-auto bg-white rounded-[10px] shadow-md p-5 mb-5 flex flex-col 800px:flex-row 800px:items-center 800px:justify-between"
+          >
+            {/* Address Type */}
+            <div className="800px:w-[120px] mb-3 800px:mb-0">
+              <h5 className="font-[600] text-[18px]">{item.addressType}</h5>
+            </div>
 
-      <div className="w-full bg-white rounded-[4px] shadow p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* Address Type */}
-        <div>
-          <h5 className="font-[600]">Default</h5>
-        </div>
+            {/* Address */}
+            <div className="800px:flex-1 mb-3 800px:mb-0">
+              <h6 className="break-words 800px:whitespace-nowrap">
+                {item.address1 || item.address2}
+              </h6>
+            </div>
 
-        {/* Address */}
-        <div>
-          <h6>House# 852 block# 49 Samanabad</h6>
-        </div>
+            {/* Phone */}
+            <div className="800px:w-[150px] mb-3 800px:mb-0">
+              <h6>{user.phoneNumber}</h6>
+            </div>
 
-        {/* Phone */}
-        <div>
-          <h6>+92 322498368</h6>
-        </div>
-
-        {/* Delete Icon */}
-        <div className="flex justify-end md:justify-center">
-          <AiOutlineDelete size={25} className="cursor-pointer" />
-        </div>
-      </div>
+            {/* Delete Icon */}
+            <div className="flex justify-center 800px:justify-end 800px:w-[50px]">
+              <AiOutlineDelete
+                size={25}
+                className="cursor-pointer hover:text-red-500"
+                onClick={() => handleDeleteAddress(item)}
+              />
+            </div>
+          </div>
+        ))}
+        {
+          user && user.addresses.length === 0 && (
+            <h5 className="text-center pb-10 text-[18px]">
+              You not have any saved address!
+            </h5>
+          )
+        }
     </div>
   );
 };
