@@ -12,6 +12,8 @@ import {
   ProductDetailsPage,
   ProfilePage,
   CheckoutPage,
+  PaymentPage,
+  OrderSuccessPage,
   ShopCreatePage,
   SellerActivationPage,
   ShopLoginPage,
@@ -79,6 +81,10 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/order/success/:id" element={<OrderSuccessPage />} />
+
+        {/* shop Routes */}
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
         <Route path="/shop/preview/:id" element={<ShopPreviewPage/>} />

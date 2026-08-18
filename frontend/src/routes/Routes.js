@@ -9,6 +9,8 @@ import FAQPage from "../pages/FAQPage";
 import ProductDetailsPage from "../pages/ProductDetailsPage";
 import ProfilePage from "../pages/ProfilePage";
 import CheckoutPage from "../pages/CheckoutPage";
+import PaymentPage from "../pages/PaymentPage";
+import OrderSuccessPage  from "../pages/OrderSuccessPage.jsx";
 import ShopCreatePage from "../pages/ShopCreatePage";
 import SellerActivationPage from "../pages/SellerActivationPage";
 import  ShopLoginPage from "../pages/ShopLoginPage";
@@ -27,6 +29,8 @@ export{
     ProductDetailsPage,
     ProfilePage,
     CheckoutPage,
+    PaymentPage,
+    OrderSuccessPage,
     ShopCreatePage,
     SellerActivationPage,
     ShopLoginPage,
