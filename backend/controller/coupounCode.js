@@ -41,20 +41,34 @@ router.get("/get-coupoun/:id", isSeller, async (req, res, next) => {
 });
 
 // delete a coupoun
-router.delete("/delete-coupoun/:id", isSeller, async(req,res,next)=>{
-    try{
-        const coupounId=req.params.id;
-        const coupoun= await CoupounCode.findByIdAndDelete(coupounId);
-        if(!coupoun){
-            return next(new ErrorHandler("Coupon code doesn't exists!", 404));
-        }
-        res.status(200).json({
-            success: true,
-            message: "Coupon code deleted successfully",
-        })
-    }catch(error){
-        return next(new ErrorHandler(error, 404));
+router.delete("/delete-coupoun/:id", isSeller, async (req, res, next) => {
+  try {
+    const coupounId = req.params.id;
+    const coupoun = await CoupounCode.findByIdAndDelete(coupounId);
+    if (!coupoun) {
+      return next(new ErrorHandler("Coupon code doesn't exists!", 404));
     }
+    res.status(200).json({
+      success: true,
+      message: "Coupon code deleted successfully",
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error, 404));
+  }
+});
+
+// get CoupounCode value
+router.get("/get-coupoun-value/:name", async (req, res, next) => {
+  try {
+    const couponCode = await CoupounCode.findOne({ name: req.params.name });
+    res.status(200).json({
+      success:true,
+      couponCode,
+    })
+
+  } catch (error) {
+    return next(new ErrorHandler(error, 404));
+  }
 });
 
 module.exports = router;
