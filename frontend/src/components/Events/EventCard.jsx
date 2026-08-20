@@ -1,8 +1,14 @@
 import React from "react";
 import CountDown from "./CountDown";
 import { backend_url } from "../../server";
+import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
+import { addToCart } from "../../redux/actions/cart";
+import { useDispatch, useSelector } from "react-redux";
 
 const EventCard = ({ active, data }) => {
+  const dispatch = useDispatch();
+  const { cart } = useSelector((state) => state.cart);
   if (!data) {
     return null;
   }
@@ -11,6 +17,21 @@ const EventCard = ({ active, data }) => {
     ? `${backend_url}${data.images[0]}`
     : "/default-event.png";
 
+
+  const addToCartHandler = (id) => {
+      const isItemExists = cart && cart.find((i) => i._id === id);
+      if (isItemExists) {
+        toast.error("Item is already in cart!");
+      } else {
+        if (data.stock < 1) {
+          toast.error("product stock limited!");
+        } else {
+          const cartData = { ...data, qty: 1 };
+          dispatch(addToCart(cartData));
+          toast.success("Item added to cart successfully!");
+        }
+      }
+    };
   return (
     <div
       className={`w-full bg-white rounded-lg overflow-hidden lg:flex p-4 gap-4 ${active ? "unset" : "mb-12"}`}
@@ -46,11 +67,13 @@ const EventCard = ({ active, data }) => {
           <CountDown data={data} />
         </div>
         <div className="flex flex-col sm:flex-row gap-4">
-          <button className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition">
+          <Link to={`/product/${data._id}?isEvent=true`}>
+            <button className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition">
             See Details
           </button>
+          </Link>
 
-          <button className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition">
+          <button className="px-8 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition" onClick={()=>addToCartHandler(data._id)}>
             Add to Cart
           </button>
         </div>

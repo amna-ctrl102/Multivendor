@@ -352,21 +352,6 @@ const CartData = ({ orderData }) => {
       <h5 className="text-[18px] font-[600] text-end pt-3">
         ${orderData.totalPrice}
       </h5>
-      <br />
-      <form>
-        <input
-          type="text"
-          className={`${styles.input} !p-3 pl-2`}
-          placeholder="Coupoun code"
-          required
-        />
-        <input
-          className={`w-full h-[40px] border border-[#f63b60] text-center text-[#f63b60] rounded-[3px] mt-8 cursor-pointer`}
-          required
-          value="Apply code"
-          type="submit"
-        />
-      </form>
     </div>
   );
 };
