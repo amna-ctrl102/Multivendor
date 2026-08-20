@@ -49,7 +49,7 @@ const Checkout = () => {
         discountPrice,
         shippingAddress,
       };
-      localStorage.setItem("latesOrder", JSON.stringify(orderData));
+      localStorage.setItem("latestOrder", JSON.stringify(orderData));
       navigate("/payment");
     }
   };
@@ -125,7 +125,7 @@ const Checkout = () => {
       setDiscountPrice(nextDiscountPrice);
       setCouponCode("");
     } catch (error) {
-      toast.error(
+      console.log(
         error.response?.data?.message ||
           error.message ||
           "Something went wrong",

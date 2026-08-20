@@ -7,12 +7,14 @@ const shopRouter=require("./controller/shop");
 const productRouter=require("./controller/product");
 const eventRouter=require("./controller/event");
 const coupounRouter=require("./controller/coupounCode");
+const paymentRouter=require("./controller/payment");
+const orderRouter=require("./controller/order");
 const cors= require("cors");
 
 //config
 if(process.env.NODE_ENV !== "PRODUCTION"){
     require("dotenv").config({
-        path:"backend/config/.env"
+        path: `${__dirname}/config/.env`
     })
 }
  
@@ -31,6 +33,8 @@ app.use("/api/v2/shop",shopRouter);
 app.use("/api/v2/product",productRouter);
 app.use("/api/v2/event",eventRouter);
 app.use("/api/v2/coupoun",coupounRouter);
+app.use("/api/v2/payment",paymentRouter);
+app.use("/api/v2/order",orderRouter);
 
 // it's for Errorhandling
 app.use(errorMiddleware);
