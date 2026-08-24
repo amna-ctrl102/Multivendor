@@ -14,6 +14,8 @@ import OrderSuccessPage  from "../pages/OrderSuccessPage.jsx";
 import ShopCreatePage from "../pages/ShopCreatePage";
 import SellerActivationPage from "../pages/SellerActivationPage";
 import  ShopLoginPage from "../pages/ShopLoginPage";
+import OrderDetailPage from "../pages/OrderDetailPage";
+import TrackOrderPage from "../pages/TrackOrderPage";
 
 
 
@@ -34,4 +36,6 @@ export{
     ShopCreatePage,
     SellerActivationPage,
     ShopLoginPage,
+    OrderDetailPage,
+    TrackOrderPage,
 }

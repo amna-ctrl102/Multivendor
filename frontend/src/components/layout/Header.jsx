@@ -20,9 +20,10 @@ import { RxCross1 } from "react-icons/rx";
 
 const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
-  const{allProducts}=useSelector((state)=>state.products);
-  const{cart}=useSelector((state)=>state.cart);
-  const {wishlist}= useSelector((state)=>state.wishlist);
+  const { isSeller } = useSelector((state) => state.seller);
+  const { allProducts } = useSelector((state) => state.products);
+  const { cart } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
   const [searchTerm, setSearchTerm] = useState("");
   const [searchData, setSearchData] = useState(null);
   const [active, setActive] = useState(false);
@@ -106,11 +107,19 @@ const Header = ({ activeHeading }) => {
             ) : null}
           </div>
           <div className={`${styles.button}`}>
-            <Link to="/shop-create">
-              <h1 className="text-[#fff] flex items-center">
-                Become Seller <IoIosArrowForward className="ml-1" />
-              </h1>
-            </Link>
+            {isSeller ? (
+              <Link to="/dashboard">
+                <h1 className="text-[#fff] flex items-center">
+                  Go to Dashboard <IoIosArrowForward className="ml-1" />
+                </h1>
+              </Link>
+            ) : (
+              <Link to="/shop-create">
+                <h1 className="text-[#fff] flex items-center">
+                  Become Seller <IoIosArrowForward className="ml-1" />
+                </h1>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -291,11 +300,19 @@ const Header = ({ activeHeading }) => {
             <div
               className={`h-[40px] w-[90%] rounded-md bg-black flex items-center justify-center ml-4`}
             >
-              <Link to="/shop-create">
-                <h1 className="text-[#fff] flex items-center justify-center">
-                  Become Seller <IoIosArrowForward className="ml-1" />
-                </h1>
-              </Link>
+              {isSeller ? (
+                <Link to="/dashboard">
+                  <h1 className="text-[#fff] flex items-center justify-center">
+                    Go to Dashboard <IoIosArrowForward className="ml-1" />
+                  </h1>
+                </Link>
+              ) : (
+                <Link to="/shop-create">
+                  <h1 className="text-[#fff] flex items-center justify-center">
+                    Become Seller <IoIosArrowForward className="ml-1" />
+                  </h1>
+                </Link>
+              )}
             </div>
             <br />
             <br />

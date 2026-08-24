@@ -16,6 +16,7 @@ import {
 } from "../../redux/actions/wishlist";
 import { addToCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
+import Ratings from "../Ratings/Ratings";
 
 const ProductDetails = ({ data }) => {
   const { cart } = useSelector((state) => state.cart);
@@ -78,6 +79,13 @@ const ProductDetails = ({ data }) => {
     setClick(!click);
     dispatch(addToWishlist(data));
   };
+
+  const totalReviewsLength =
+    products &&
+    products.reduce((acc, product) => acc + (product?.reviews?.length || 0), 0);
+
+  // product-level rating should come from the current product, not from all products of the shop
+  const averageRatings = Number(data?.ratings || 0);
 
   return (
     <>
@@ -200,7 +208,9 @@ const ProductDetails = ({ data }) => {
                           {data.shop.name}
                         </h3>
 
-                        <h5 className="text-[15px]">(4/5) Ratings</h5>
+                        <h5 className="text-[15px]">
+                          ({Number(averageRatings || 0).toFixed(1)}/5) Ratings
+                        </h5>
                       </div>
                     </div>
                   </Link>
@@ -221,12 +231,12 @@ const ProductDetails = ({ data }) => {
           </div>
         )}
       </div>
-      {data && <ProductDetailsInfo data={data} products={products} />}
+    {data && <ProductDetailsInfo data={data} products={products} totalReviewsLength={totalReviewsLength} averageRatings={averageRatings} />}
     </>
   );
 };
 
-const ProductDetailsInfo = ({ data, products }) => {
+const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRatings }) => {
   const [active, setActive] = useState(1);
   return (
     <div className="bg-white w-[95%] max-w-[1400px] shadow-md rounded-xl mt-8 mb-8 mx-auto p-4 800px:p-6">
@@ -273,8 +283,30 @@ const ProductDetailsInfo = ({ data, products }) => {
         </>
       ) : null}
       {active === 2 ? (
-        <div className="w-full justify-center min-h-[40vh] flex items-center">
-          <p>No Reviews yet!</p>
+        <div className="w-full min-h-[40vh] flex flex-col items-center py-3 overflow-y-auto">
+          {data &&
+            data.reviews.map((item, index) => (
+              <div className="w-full flex my-2">
+                <img
+                  src={`${backend_url}${item.user.avatar}`}
+                  alt=""
+                  className="w-[50px] h-[50px] rounded-full object-cover"
+                />
+                <div className="pl-2 ">
+                  <div className="w-full flex items-center">
+                    <h1 className="font-[500] mr-3">{item.user.name}</h1>
+                    <Ratings ratings={item?.rating} />
+                  </div>
+                  <p>{item.comment}</p>
+                </div>
+              </div>
+            ))}
+
+          <div className="w-full justify-center min-h-[40vh] flex items-center">
+            {data && data.reviews.length === 0 && (
+              <h5>No Reviews have for this product!</h5>
+            )}
+          </div>
         </div>
       ) : null}
       {active === 3 && (
@@ -294,7 +326,9 @@ const ProductDetailsInfo = ({ data, products }) => {
                     {data.shop.name}
                   </h3>
 
-                  <h5 className="text-[15px]">(4/5) Ratings</h5>
+                  <h5 className="text-[15px]">
+                    ({Number(averageRatings || 0).toFixed(1)}/5) Ratings
+                  </h5>
                 </div>
               </div>
             </Link>
@@ -322,7 +356,7 @@ const ProductDetailsInfo = ({ data, products }) => {
             </h5>
 
             <h5 className="font-semibold mt-4">
-              Total Reviews: <span className="font-normal">324</span>
+              Total Reviews: <span className="font-normal">{totalReviewsLength}</span>
             </h5>
 
             <Link to="/">

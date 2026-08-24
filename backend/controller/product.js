@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Product = require("../model/product");
+const Order = require("../model/order");
 const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const Shop = require("../model/shop");
-const { isSeller } = require("../middleware/auth");
-const fs= require("fs");
+const { isSeller, isAuthenticated } = require("../middleware/auth");
+const fs = require("fs");
 
 router.post(
   "/create-product",
@@ -64,7 +65,7 @@ router.delete("/delete-shop-product/:id", isSeller, async (req, res, next) => {
       });
     });
 
-    const product= await Product.findByIdAndDelete(productId);
+    const product = await Product.findByIdAndDelete(productId);
     if (!product) {
       return next(new ErrorHandler("Product is not found with this Id!", 404));
     }
@@ -79,16 +80,83 @@ router.delete("/delete-shop-product/:id", isSeller, async (req, res, next) => {
 });
 
 // get products of all shops
-router.get("/get-all-products", async(req,res,next)=>{
-    try{
-        const allProducts = await Product.find();
-        res.status(200).json({
-            success:true,
-            allProducts,
-        });
-    }catch(error){
-        return next(new ErrorHandler(error, 400));
-    }
+router.get("/get-all-products", async (req, res, next) => {
+  try {
+    const allProducts = await Product.find();
+    res.status(200).json({
+      success: true,
+      allProducts,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error, 400));
+  }
 });
+
+// review for a product
+router.put(
+  "/create-new-review",
+  isAuthenticated,
+  async (req, res, next) => {
+    try {
+      const { user, rating, comment, productId, orderId } = req.body;
+
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+      }
+
+      const review = {
+        user,
+        rating,
+        comment,
+        productId,
+        orderId,
+      };
+
+      // Check if current user has already reviewed this product
+      const existingReview = product.reviews.find(
+        (rev) => String(rev.user._id) === String(req.user._id)
+      );
+
+      if (existingReview) {
+        // Update existing review
+        existingReview.rating = rating;
+        existingReview.comment = comment;
+        existingReview.user = user;
+      } else {
+        // Add new review
+        product.reviews.push(review);
+      }
+
+      // Calculate average rating
+      let totalRating = 0;
+
+      product.reviews.forEach((rev) => {
+        totalRating += Number(rev.rating);
+      });
+
+      product.ratings =
+        product.reviews.length > 0
+          ? totalRating / product.reviews.length
+          : 0;
+
+      await product.save({ validateBeforeSave: false });
+
+      await Order.findByIdAndUpdate(
+        orderId,
+        { $set: { "cart.$[elem].isReviewed": true } },
+        { arrayFilters: [{ "elem._id": productId }], returnDocument: "after" }
+      );
+
+      res.status(200).json({
+        success: true,
+        message:"Review added successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  }
+);
 
 module.exports = router;

@@ -34,6 +34,25 @@ const productSchema= new mongoose.Schema({
             required:[true, "Please enter your product images!"]
         }
     ],
+    reviews:[
+        {
+            user:{
+                type:Object,
+            },
+            rating:{
+                type:Number,
+            },
+            comment:{
+                type:String,
+            },
+            productId:{
+                type:String,
+            },
+        },
+    ],
+    ratings:{
+        type:Number,
+    },
     shopId:{
         type:String,
         required:true,
