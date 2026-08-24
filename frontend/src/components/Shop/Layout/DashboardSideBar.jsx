@@ -10,153 +10,139 @@ import { BiMessageSquareDetail } from "react-icons/bi";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
 
 const DashboardSideBar = ({ active }) => {
+  const menuItems = [
+    {
+      id: 1,
+      label: "Dashboard",
+      icon: RxDashboard,
+      link: "/dashboard",
+    },
+    {
+      id: 2,
+      label: "All Orders",
+      icon: FiShoppingBag,
+      link: "/dashboard-orders",
+    },
+    {
+      id: 3,
+      label: "All Products",
+      icon: FiPackage,
+      link: "/dashboard-products",
+    },
+    {
+      id: 4,
+      label: "Create Product",
+      icon: AiOutlineFolderAdd,
+      link: "/dashboard-create-product",
+    },
+    {
+      id: 5,
+      label: "All Events",
+      icon: MdOutlineLocalOffer,
+      link: "/dashboard-events",
+    },
+    {
+      id: 6,
+      label: "Create Event",
+      icon: VscNewFile,
+      link: "/dashboard-create-events",
+    },
+    {
+      id: 7,
+      label: "Withdraw Money",
+      icon: CiMoneyBill,
+      link: "/dashboard-withdraw-money",
+    },
+    {
+      id: 8,
+      label: "Shop Inbox",
+      icon: BiMessageSquareDetail,
+      link: "/dashboard-messages",
+    },
+    {
+      id: 9,
+      label: "Discount Codes",
+      icon: AiOutlineGift,
+      link: "/dashboard-coupouns",
+    },
+    {
+      id: 10,
+      label: "Refunds",
+      icon: HiOutlineReceiptRefund,
+      link: "/dashboard-refunds",
+    },
+    {
+      id: 11,
+      label: "Settings",
+      icon: CiSettings,
+      link: "/dashboard-settings",
+    },
+  ];
+
   return (
-    <div className="w-full h-[89vh] bg-white shadow-sm overflow-y-scroll sticky top-0 left-0 z-10">
-      {/* single item */}
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard" className="w-full flex items-center">
-          <RxDashboard
-            size={30}
-            color={`${active === 1 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 1 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Dashboard
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-orders" className="w-full flex items-center">
-          <FiShoppingBag
-            size={30}
-            color={`${active === 2 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 2 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            All Orders
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-products" className="w-full flex items-center">
-          <FiPackage
-            size={30}
-            color={`${active === 3 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 3 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            All Products
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-create-product" className="w-full flex items-center">
-          <AiOutlineFolderAdd
-            size={30}
-            color={`${active === 4 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 4 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Create Product
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-events" className="w-full flex items-center">
-          <MdOutlineLocalOffer
-            size={30}
-            color={`${active === 5 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 5 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            All Events
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-create-events" className="w-full flex items-center">
-          <VscNewFile
-            size={30}
-            color={`${active === 6 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 6 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Create Event
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-withdraw-money" className="w-full flex items-center">
-          <CiMoneyBill
-            size={30}
-            color={`${active === 7 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 7 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Withdraw Money
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-messages" className="w-full flex items-center">
-          <BiMessageSquareDetail
-            size={30}
-            color={`${active === 8 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 8 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Shop Inbox
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-coupouns" className="w-full flex items-center">
-          <AiOutlineGift
-            size={30}
-            color={`${active === 9 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 9 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Discount Codes
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-refunds" className="w-full flex items-center">
-          <HiOutlineReceiptRefund
-            size={30}
-            color={`${active === 10 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 10 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Refunds
-          </h5>
-        </Link>
-      </div>
-      <div className="w-full flex items-center p-4">
-        <Link to="/dashboard-settings" className="w-full flex items-center">
-          <CiSettings
-            size={30}
-            color={`${active === 11 ? "crimson" : "#555"}`}
-          />
-          <h5
-            className={`800px:block hidden pl-2 text-[18px] font[400] ${active === 11 ? "text-[crimson]" : "text-[#555]"}`}
-          >
-            Settings
-          </h5>
-        </Link>
-      </div>
-    </div>
+    <aside className="w-full h-[calc(100vh-72px)] bg-white border-r border-[#edf0f4] sticky top-[72px] left-0 overflow-y-auto hide-scrollbar hide-scrollbar::-webkit-scrollbar">
+      <nav className="px-2 800px:px-3 pb-6">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = active === item.id;
+
+          return (
+            <Link
+              key={item.id}
+              to={item.link}
+              className={`
+                relative w-full flex items-center
+                h-[52px]
+                px-3 800px:px-4
+                mb-1
+                rounded-xl
+                transition-all duration-200
+                group
+                ${
+                  isActive
+                    ? "bg-[#fff1f3] text-[#e94560]"
+                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#e94560]"
+                }
+              `}
+            >
+              {/* Active Indicator */}
+              {isActive && (
+                <span className="absolute left-0 top-[11px] w-[4px] h-[30px] rounded-r-full bg-[#e94560]" />
+              )}
+
+              <Icon
+                size={23}
+                className={`
+                  shrink-0 transition-colors
+                  ${
+                    isActive
+                      ? "text-[#e94560]"
+                      : "text-[#64748b] group-hover:text-[#e94560]"
+                  }
+                `}
+              />
+
+              <span
+                className={`
+                  hidden 800px:block
+                  ml-3
+                  text-[14px]
+                  font-[500]
+                  whitespace-nowrap
+                  ${
+                    isActive
+                      ? "text-[#e94560]"
+                      : "text-[#475569]"
+                  }
+                `}
+              >
+                {item.label}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
+    </aside>
   );
 };
 

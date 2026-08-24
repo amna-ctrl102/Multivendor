@@ -4,17 +4,21 @@ import AllCoupouns from '../../components/Shop/Layout/AllCoupouns'
 
 const ShopAllCoupounPage = () => {
   return (
-    <div className="min-h-screen bg-[#f5f5f5]">
-      <DashboardHeader />
-      <div className="flex">
-        <div className="w-[80px] 800px:w-[330px] shrink-0">
-          <DashboardSideBar active={9} />
-        </div>
-        <div className="flex-1 flex justify-center py-6">
-          <AllCoupouns />
-        </div>
-      </div>
-    </div>
+    <div className="min-h-screen">
+              <DashboardHeader />
+        
+              <div className="flex w-full">
+                {/* Sidebar */}
+                <aside className="w-[70px] 800px:w-[260px] shrink-0">
+                  <DashboardSideBar active={9} />
+                </aside>
+        
+                {/* Main Content */}
+                <div className="flex-1 min-w-0 overflow-hidden">
+                  <AllCoupouns />
+                </div>
+              </div>
+            </div>
   )
 }
 
