@@ -200,7 +200,6 @@ const Payment = () => {
       localStorage.setItem("cartItems", JSON.stringify([]));
       localStorage.setItem("latestOrder", JSON.stringify([]));
       window.location.reload();
-
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -284,7 +283,6 @@ const PaymentInfo = ({
                       style: {
                         base: {
                           fontSize: "19px",
-                          lineHeight: 1.5,
                           color: "#444",
                         },
                         empty: {
@@ -306,10 +304,10 @@ const PaymentInfo = ({
                   <CardNumberElement
                     className={`${styles.input} !w-[95%] !p-3`}
                     options={{
+                      disableLink: true,
                       style: {
                         base: {
                           fontSize: "19px",
-                          lineHeight: 1.5,
                           color: "#444",
                         },
                         empty: {
@@ -331,7 +329,6 @@ const PaymentInfo = ({
                       style: {
                         base: {
                           fontSize: "19px",
-                          lineHeight: 1.5,
                           color: "#444",
                         },
                         empty: {

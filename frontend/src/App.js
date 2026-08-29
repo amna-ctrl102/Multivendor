@@ -1,5 +1,5 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import {
   LoginPage,
   SignupPage,
@@ -19,7 +19,7 @@ import {
   ShopLoginPage,
   OrderDetailPage,
   TrackOrderPage,
-  UserInbox
+  UserInbox,
 } from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -53,6 +53,7 @@ import { loadStripe } from "@stripe/stripe-js";
 
 const App = () => {
   const [stripeApiKey, setStripeApiKey] = useState("");
+  const { pathname } = useLocation();
 
   async function getStripeApiKey() {
     const { data } = await axios.get(`${server}/payment/stripeapikey`);
@@ -64,25 +65,18 @@ const App = () => {
     Store.dispatch(loadSeller());
     Store.dispatch(getAllProducts());
     Store.dispatch(getAllEvents());
-    getStripeApiKey();
   }, []);
+
+  useEffect(() => {
+    if (pathname === "/payment") {
+      getStripeApiKey();
+    } else {
+      setStripeApiKey("");
+    }
+  }, [pathname]);
 
   return (
     <>
-      {stripeApiKey && (
-        <Elements stripe={loadStripe(stripeApiKey)}>
-          <Routes>
-            <Route
-              path="/payment"
-              element={
-                <ProtectedRoute>
-                  <PaymentPage />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Elements>
-      )}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -137,6 +131,20 @@ const App = () => {
           element={
             <ProtectedRoute>
               <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              {stripeApiKey ? (
+                <Elements stripe={loadStripe(stripeApiKey)}>
+                  <PaymentPage />
+                </Elements>
+              ) : (
+                <div>Loading payment...</div>
+              )}
             </ProtectedRoute>
           }
         />

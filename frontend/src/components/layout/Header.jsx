@@ -91,9 +91,9 @@ const Header = ({ activeHeading }) => {
             {searchData && searchTerm !== "" && searchData.length > 0 ? (
               <div className="absolute min-h-[30vh] bg-slate-50 shadow-sm-2 z-[9] p-2">
                 {searchData &&
-                  searchData.map((i, index) => {
+                  searchData.map((i) => {
                     return (
-                      <Link to={`/product/${i._id}`}>
+                      <Link key={i._id} to={`/product/${i._id}`}>
                         <div className="w-full flex items-start py-2">
                           <img
                             src={`${backend_url}${i.images && i.images[0]}`}
@@ -283,9 +283,9 @@ const Header = ({ activeHeading }) => {
               {searchData && searchTerm !== "" && searchData.length > 0 ? (
                 <div className="absolute w-full bg-white shadow-md rounded-md z-[10] left-0 p-3">
                   {searchData &&
-                    searchData.map((i, index) => {
+                    searchData.map((i) => {
                       return (
-                        <Link to={`/product/${i._id}`}>
+                        <Link key={i._id} to={`/product/${i._id}`}>
                           <div className="w-full flex items-start py-2">
                             <img
                               src={`${backend_url}${i.images && i.images[0]}`}
