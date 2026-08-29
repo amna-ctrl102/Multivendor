@@ -3,6 +3,8 @@ const router = express.Router();
 const path = require("path");
 const { upload } = require("../multer");
 const Shop = require("../model/shop");
+const Product = require("../model/product");
+const Event = require("../model/event");
 const ErrorHandler = require("../utils/ErrorHandler");
 const fs = require("fs");
 const jwt = require("jsonwebtoken");
@@ -141,33 +143,150 @@ router.get("/getSeller", isSeller, async (req, res, next) => {
   }
 });
 
-router.get("/logout", isSeller,async(req,res,next)=>{
-  try{
-    res.cookie("seller_token",null,{
+router.get("/logout", isSeller, async (req, res, next) => {
+  try {
+    res.cookie("seller_token", null, {
       expires: new Date(Date.now()),
       httpOnly: true,
     });
 
     res.status(200).json({
-      success:true,
+      success: true,
       message: "Log out Successfull!",
-    })
-  }catch(error){
-    return next(new ErrorHandler(error.message,500));
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
 // get shop info
-router.get("/get-shop-info/:id", async(req,res,next)=>{
-  try{
-    const shop= await Shop.findById(req.params.id);
+router.get("/get-shop-info/:id", async (req, res, next) => {
+  try {
+    const shop = await Shop.findById(req.params.id);
     res.status(200).json({
-      success:true,
+      success: true,
       shop,
-    })
-  }catch(error){
-    return next(new ErrorHandler(error.message,500));
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
   }
-})
+});
+
+// update shop avatar
+router.put(
+  "/update-shop-avatar",
+  isSeller,
+  upload.single("image"),
+  async (req, res, next) => {
+    try {
+      const existShop = await Shop.findById(req.seller._id);
+      if (!existShop) {
+        return next(new ErrorHandler("Shop doesn't exist", 400));
+      }
+
+      if (!req.file) {
+        return next(new ErrorHandler("Please upload an image", 400));
+      }
+
+      const existAvatarPath = existShop.avatar;
+
+      fs.unlink(existAvatarPath, (err) => {
+        if (err) console.log(err);
+      });
+
+      const filename = req.file.filename;
+      const fileUrl = path.join("uploads", filename);
+
+      const shop = await Shop.findByIdAndUpdate(
+        req.seller._id,
+        {
+          avatar: fileUrl,
+        },
+        {
+          returnDocument: "after",
+        },
+      );
+
+      await Product.updateMany(
+        { "shop._id": shop._id },
+        {
+          $set: {
+            "shop.avatar": shop.avatar,
+          },
+        },
+      );
+      
+      await Event.updateMany(
+        { "shop._id": shop._id },
+        {
+          $set: {
+            "shop.avatar": shop.avatar,
+          },
+        },
+      );
+
+      res.status(200).json({
+        success: true,
+        shop,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  },
+);
+
+// update seller info
+router.put("/update-shop-info", isSeller, async (req, res, next) => {
+  try {
+    const { name, description, address, phoneNumber, zipCode } = req.body;
+    const shop = await Shop.findById(req.seller._id);
+
+    if (!shop) {
+      return next(new ErrorHandler("User doesn't exists", 400));
+    }
+
+    shop.name = name;
+    shop.description = description;
+    shop.phoneNumber = phoneNumber;
+    shop.address = address;
+    shop.zipCode = zipCode;
+
+    await shop.save();
+
+    await Product.updateMany(
+      { "shop._id": shop._id },
+      {
+        $set: {
+          "shop.name": shop.name,
+          "shop.description": shop.description,
+          "shop.address": shop.address,
+          "shop.phoneNumber": shop.phoneNumber,
+          "shop.zipCode": shop.zipCode,
+        },
+      },
+    );
+
+    await Event.updateMany(
+      { "shop._id": shop._id },
+      {
+        $set: {
+          "shop.name": shop.name,
+          "shop.description": shop.description,
+          "shop.address": shop.address,
+          "shop.phoneNumber": shop.phoneNumber,
+          "shop.zipCode": shop.zipCode,
+        },
+      },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Shop info updated successfully!",
+      shop,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
 
 module.exports = router;

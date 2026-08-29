@@ -1,4 +1,4 @@
-import React from "react";
+import ShopLogo from "../../../Assests/ShopLogo.png";
 import { AiOutlineGift } from "react-icons/ai";
 import { MdOutlineLocalOffer } from "react-icons/md";
 import { FiPackage, FiShoppingBag } from "react-icons/fi";
@@ -15,9 +15,9 @@ const DashboardHeader = () => {
       {/* Logo */}
       <Link to="/" className="flex items-center">
         <img
-          src="https://shopo.quomodothemes.website/assets/images/logo.svg"
+          src={ShopLogo}
           alt="Shop Logo"
-          className="w-[125px] md:w-[140px]"
+          className="w-[125px] md:w-[160px]"
         />
       </Link>
 
@@ -25,7 +25,7 @@ const DashboardHeader = () => {
       <div className="flex items-center gap-1 md:gap-2">
         {/* Coupon */}
         <Link
-          to="/dashboard/coupouns"
+          to="/dashboard-coupouns"
           className="hidden 800px:flex w-[42px] h-[42px] rounded-xl items-center justify-center hover:bg-[#f5f7fa] transition"
           title="Discount Codes"
         >
@@ -47,7 +47,7 @@ const DashboardHeader = () => {
           className="hidden 800px:flex w-[42px] h-[42px] rounded-xl items-center justify-center hover:bg-[#f5f7fa] transition"
           title="Products"
         >
-          <FiShoppingBag size={23} className="text-[#4b5563]" />
+          <FiPackage size={23} className="text-[#4b5563]" />
         </Link>
 
         {/* Orders */}
@@ -56,7 +56,7 @@ const DashboardHeader = () => {
           className="hidden 800px:flex w-[42px] h-[42px] rounded-xl items-center justify-center hover:bg-[#f5f7fa] transition"
           title="Orders"
         >
-          <FiPackage size={23} className="text-[#4b5563]" />
+          <FiShoppingBag size={23} className="text-[#4b5563]" />
         </Link>
 
         {/* Messages */}
@@ -76,7 +76,7 @@ const DashboardHeader = () => {
           <img
             src={`${backend_url}${seller?.avatar}`}
             alt="Seller"
-            className="w-[55px] h-[55px] rounded-full object-cover"
+            className="w-[45px] h-[45px] rounded-full object-cover border-2 border-[#077f9c]"
           />
         </Link>
       </div>

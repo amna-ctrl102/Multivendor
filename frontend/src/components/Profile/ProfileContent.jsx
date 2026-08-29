@@ -13,6 +13,7 @@ import { Button } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import {
   deleteUserAddress,
+  loadSeller,
   updateUserAddress,
   updateUserInformation,
 } from "../../redux/actions/user";
@@ -62,7 +63,8 @@ const ProfileContent = ({ active }) => {
         withCredentials: true,
       });
       console.log(res.data);
-      window.location.reload();
+      dispatch(loadSeller());
+      toast.success("Avatar Updated Successfully!");
     } catch (error) {
       toast.error(
         error.response?.data?.message ||
@@ -81,9 +83,9 @@ const ProfileContent = ({ active }) => {
               <img
                 src={`${backend_url}${user?.avatar}`}
                 alt="profileImage"
-                className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border-[3px] border-[#3ad132]"
+                className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover border-[3px] border-[#a30563]"
               />
-              <div className="w-[40px] h-[40px] bg-[#3ad132] rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">
+              <div className="w-[40px] h-[40px] bg-[#a30563] rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">
                 <input
                   type="file"
                   name="image"
@@ -106,7 +108,7 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Full Name</label>
                   <input
                     type="text"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                     required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -116,7 +118,7 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Email Address</label>
                   <input
                     type="email"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132] mb-6 800px:mb-0`}
+                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563] mb-6 800px:mb-0`}
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -128,7 +130,7 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Phone Number</label>
                   <input
                     type="text"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                     required
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
@@ -138,7 +140,7 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Enter Your Password </label>
                   <input
                     type="password"
-                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132] mb-6 800px:mb-0`}
+                    className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563] mb-6 800px:mb-0`}
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -147,7 +149,7 @@ const ProfileContent = ({ active }) => {
               </div>
               <div className="flex justify-center mt-8 mb-7">
                 <button
-                  className="w-full sm:w-[320px] h-12 flex items-center justify-center bg-[#3ad132] text-white rounded-lg uppercase font-semibold hover:opacity-95 hover:shadow-md transition disabled:opacity-80"
+                  className="w-full sm:w-[320px] h-12 flex items-center justify-center bg-black hover:bg-gray-800 transition text-white rounded-lg uppercase font-semibold shadow-lg disabled:opacity-80"
                   type="submit"
                 >
                   Update Profile
@@ -204,8 +206,27 @@ const AllOrders = () => {
       headerName: "Status",
       minWidth: 130,
       flex: 0.7,
-      cellClassName: (params) =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: (params) => {
+        const delivered = params.value === "Delivered";
+
+        return (
+          <span
+            className={`
+              px-3 py-1.5
+              rounded-full
+              text-[12px]
+              font-[600]
+              ${
+                delivered
+                  ? "bg-[#ecfdf3] text-[#16a34a]"
+                  : "bg-[#fff4e5] text-[#d97706]"
+              }
+            `}
+          >
+            {params.value}
+          </span>
+        );
+      },
     },
     {
       field: "itemsQty",
@@ -257,7 +278,7 @@ const AllOrders = () => {
 
   return (
     <div>
-      <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
+      <h1 className="text-[25px] font-[600] text-black pb-2">
         My Orders
       </h1>
       <div className="w-full overflow-x-auto pt-2">
@@ -288,8 +309,27 @@ const AllRefundOrders = () => {
       headerName: "Status",
       minWidth: 130,
       flex: 0.7,
-      cellClassName: (params) =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: (params) => {
+        const delivered = params.value === "Delivered";
+
+        return (
+          <span
+            className={`
+              px-3 py-1.5
+              rounded-full
+              text-[12px]
+              font-[600]
+              ${
+                delivered
+                  ? "bg-[#ecfdf3] text-[#16a34a]"
+                  : "bg-[#fff4e5] text-[#d97706]"
+              }
+            `}
+          >
+            {params.value}
+          </span>
+        );
+      },
     },
     {
       field: "itemsQty",
@@ -341,7 +381,7 @@ const AllRefundOrders = () => {
 
   return (
     <div>
-      <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
+      <h1 className="text-[25px] font-[600] text-black pb-2">
         Refund Requests
       </h1>
       <div className="w-full overflow-x-auto pt-2">
@@ -370,8 +410,27 @@ const TrackOrders = () => {
       headerName: "Status",
       minWidth: 130,
       flex: 0.7,
-      cellClassName: (params) =>
-        params.row.status === "Delivered" ? "greenColor" : "redColor",
+      renderCell: (params) => {
+        const delivered = params.value === "Delivered";
+
+        return (
+          <span
+            className={`
+              px-3 py-1.5
+              rounded-full
+              text-[12px]
+              font-[600]
+              ${
+                delivered
+                  ? "bg-[#ecfdf3] text-[#16a34a]"
+                  : "bg-[#fff4e5] text-[#d97706]"
+              }
+            `}
+          >
+            {params.value}
+          </span>
+        );
+      },
     },
     {
       field: "itemsQty",
@@ -423,7 +482,7 @@ const TrackOrders = () => {
 
   return (
     <div>
-      <h1 className="text-[25px] font-[600] text-[#000000ba] pb-2">
+      <h1 className="text-[25px] font-[600] text-black pb-2">
         Track Your Orders
       </h1>
       <div className="w-full overflow-x-auto pt-2">
@@ -466,7 +525,7 @@ const ChangePassword = () => {
 
   return (
     <div className="w-full">
-      <h1 className="text-[22px] 800px:text-[25px] text-center font-[600] text-[#000000ba] pb-2">
+      <h1 className="text-[22px] 800px:text-[25px] text-center font-[600] text-black pb-2">
         Change Password
       </h1>
       <br />
@@ -477,7 +536,7 @@ const ChangePassword = () => {
               <label className="block pb-2">Old Password</label>
               <input
                 type="password"
-                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                 required
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
@@ -487,7 +546,7 @@ const ChangePassword = () => {
               <label className="block pb-2">New Password</label>
               <input
                 type="password"
-                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                 required
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
@@ -497,7 +556,7 @@ const ChangePassword = () => {
               <label className="block pb-2">Confirm Password</label>
               <input
                 type="password"
-                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                className={`${styles.input} p-3 focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
@@ -505,7 +564,7 @@ const ChangePassword = () => {
             </div>
             <div className="w-full flex justify-center mt-3 mb-7">
               <button
-                className="text-sm 800px:text-lg w-full sm:w-[80%] h-12 flex items-center justify-center bg-[#3ad132] text-white rounded-lg uppercase font-semibold hover:opacity-95 hover:shadow-md transition disabled:opacity-80"
+                className="text-sm 800px:text-lg w-full sm:w-[80%] h-12 flex items-center justify-center bg-black hover:bg-gray-800 text-white rounded-lg uppercase font-semibold shadow-lg transition disabled:opacity-80"
                 type="submit"
               >
                 Update Password
@@ -598,7 +657,7 @@ const Address = () => {
     <div className="w-full">
       {open && (
         <div className="fixed inset-0 z-[9999] h-screen bg-[#0000004b] flex items-center justify-center">
-          <div className="w-[90%] 800px:w-[40%] h-[90vh] bg-white rounded-md shadow-md relative overflow-y-auto">
+          <div className="w-[90%] 800px:w-[40%] h-[90vh] bg-white rounded-md shadow-md relative overflow-y-auto hide-scrollbar">
             <div className="w-full flex justify-end pt-4 pr-4">
               <RxCross1
                 size={25}
@@ -665,7 +724,7 @@ const Address = () => {
                       name="address1"
                       value={address1}
                       placeholder="Enter your address 1"
-                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                       onChange={(e) => setAddress1(e.target.value)}
                     />
                   </div>
@@ -676,7 +735,7 @@ const Address = () => {
                       name="address2"
                       value={address2}
                       placeholder="Enter your address 2"
-                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                       onChange={(e) => setAddress2(e.target.value)}
                     />
                   </div>
@@ -687,7 +746,7 @@ const Address = () => {
                       name="zipCode"
                       value={zipCode}
                       placeholder="Enter your zip code"
-                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#3ad132] focus:border-[#3ad132]`}
+                      className={`w-[95%] border p-3 rounded-[5px] focus:outline-none focus:ring-2 focus:ring-[#a30563] focus:border-[#a30563]`}
                       onChange={(e) => setZipCode(e.target.value)}
                     />
                   </div>
@@ -715,7 +774,7 @@ const Address = () => {
                   </div>
                   <div className="w-full pl-5 pb-3">
                     <button
-                      className="w-[95%] h-12 flex items-center justify-center bg-[#3ad132] text-white rounded-lg uppercase font-semibold hover:opacity-95 hover:shadow-md transition disabled:opacity-80"
+                      className="w-[95%] h-12 flex items-center justify-center bg-black hover:bg-gray-800 transition text-white rounded-lg uppercase font-semibold shadow-lg disabled:opacity-80"
                       type="submit"
                     >
                       Save Address
@@ -728,12 +787,12 @@ const Address = () => {
         </div>
       )}
       <div className="flex flex-col items-center 800px:flex-row 800px:items-center 800px:justify-between gap-5 mb-6">
-        <h1 className="text-[25px] 800px:text-[28px] font-[600] text-[#000000ba] text-center 800px:text-left">
+        <h1 className="text-[25px] 800px:text-[28px] font-[600] text-black text-center 800px:text-left">
           My Addresses
         </h1>
 
         <div className="w-full 800px:w-auto" onClick={() => setOpen(true)}>
-          <button className="w-full 800px:w-[180px] h-[50px] bg-black text-white rounded-[10px] font-[600] hover:opacity-90 transition">
+          <button className="w-full 800px:w-[180px] h-[50px] bg-black hover:bg-gray-800 transition text-white rounded-lg font-[600] shadow-lg">
             Add New
           </button>
         </div>

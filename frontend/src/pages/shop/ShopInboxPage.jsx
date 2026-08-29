@@ -1,8 +1,8 @@
 import DashboardHeader from "../../components/Shop/Layout/DashboardHeader";
 import DashboardSideBar from "../../components/Shop/Layout/DashboardSideBar";
-import CreateProduct from "../../components/Shop/Layout/CreateProduct";
+import ShopInbox from "../../components/Shop/Layout/ShopInbox.jsx";
 
-const ShopCreatedProductPage = () => {
+const ShopInboxPage = () => {
   return (
     <div className="min-h-screen">
       <DashboardHeader />
@@ -10,16 +10,16 @@ const ShopCreatedProductPage = () => {
       <div className="flex w-full">
         {/* Sidebar */}
         <aside className="w-[70px] 800px:w-[260px] shrink-0">
-          <DashboardSideBar active={4} />
+          <DashboardSideBar active={8} />
         </aside>
 
         {/* Main Content */}
         <div className="flex-1 min-w-0 overflow-hidden">
-          <CreateProduct />
+          <ShopInbox />
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ShopCreatedProductPage;
+export default ShopInboxPage

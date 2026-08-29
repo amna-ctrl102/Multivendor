@@ -7,6 +7,7 @@ const ErrorHandler = require("../utils/ErrorHandler");
 const Shop = require("../model/shop");
 const { isSeller, isAuthenticated } = require("../middleware/auth");
 const fs = require("fs");
+const Event = require("../model/event");
 
 router.post(
   "/create-product",
@@ -40,7 +41,10 @@ router.post(
 // get all products of a specific shop
 router.get("/get-all-products-shop/:id", async (req, res, next) => {
   try {
-    const products = await Product.find({ shopId: req.params.id });
+    const products = await Product.find({ shopId: req.params.id }).sort({
+      createdAt: -1,
+      _id: -1,
+    });
 
     res.status(201).json({
       success: true,
@@ -82,7 +86,7 @@ router.delete("/delete-shop-product/:id", isSeller, async (req, res, next) => {
 // get products of all shops
 router.get("/get-all-products", async (req, res, next) => {
   try {
-    const allProducts = await Product.find();
+    const allProducts = await Product.find().sort({ createdAt: -1, _id: -1 });
     res.status(200).json({
       success: true,
       allProducts,
@@ -100,10 +104,16 @@ router.put(
     try {
       const { user, rating, comment, productId, orderId } = req.body;
 
-      const product = await Product.findById(productId);
+      let item = await Product.findById(productId);
 
-      if (!product) {
-        return next(new ErrorHandler("Product not found", 404));
+      if (!item) {
+        item = await Event.findById(productId);
+      }
+
+      if (!item) {
+        return next(
+          new ErrorHandler("Product or Event not found", 404)
+        );
       }
 
       const review = {
@@ -114,44 +124,47 @@ router.put(
         orderId,
       };
 
-      // Check if current user has already reviewed this product
-      const existingReview = product.reviews.find(
+      const existingReview = item.reviews.find(
         (rev) => String(rev.user._id) === String(req.user._id)
       );
 
       if (existingReview) {
-        // Update existing review
         existingReview.rating = rating;
         existingReview.comment = comment;
         existingReview.user = user;
       } else {
-        // Add new review
-        product.reviews.push(review);
+        item.reviews.push(review);
       }
 
-      // Calculate average rating
       let totalRating = 0;
 
-      product.reviews.forEach((rev) => {
+      item.reviews.forEach((rev) => {
         totalRating += Number(rev.rating);
       });
 
-      product.ratings =
-        product.reviews.length > 0
-          ? totalRating / product.reviews.length
+      item.ratings =
+        item.reviews.length > 0
+          ? totalRating / item.reviews.length
           : 0;
 
-      await product.save({ validateBeforeSave: false });
+      await item.save({ validateBeforeSave: false });
 
       await Order.findByIdAndUpdate(
         orderId,
-        { $set: { "cart.$[elem].isReviewed": true } },
-        { arrayFilters: [{ "elem._id": productId }], returnDocument: "after" }
+        {
+          $set: {
+            "cart.$[elem].isReviewed": true,
+          },
+        },
+        {
+          arrayFilters: [{ "elem._id": productId }],
+          returnDocument: "after",
+        }
       );
 
       res.status(200).json({
         success: true,
-        message:"Review added successfully",
+        message: "Review added successfully",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 400));

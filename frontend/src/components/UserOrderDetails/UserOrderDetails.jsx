@@ -6,7 +6,7 @@ import {
   FaCalendarAlt,
   FaBoxOpen,
 } from "react-icons/fa";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import styles from "../../styles/styles";
@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 
 const UserOrderDetails = () => {
   const { orders } = useSelector((state) => state.order);
-  const { user } = useSelector((state) => state.user);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
 
   const [open, setOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -27,6 +27,7 @@ const UserOrderDetails = () => {
   const [rating, setRating] = useState(0);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -91,39 +92,106 @@ const UserOrderDetails = () => {
     }
   };
 
+  const handleSubmitMessage = async (event) => {
+    event.preventDefault();
+
+    if (isAuthenticated && user?._id) {
+      const userId = user._id;
+      const sellerId = data?.cart?.[0]?.shop?._id || data?.cart?.[0]?.shopId;
+
+      if (!sellerId) {
+        toast.error("Seller information is not available");
+        return;
+      }
+
+      const groupTitle = [userId, sellerId].sort().join("-");
+
+      try {
+        const res = await axios.post(
+          `${server}/conversation/create-new-conversation`,
+          {
+            groupTitle,
+            userId,
+            sellerId,
+          },
+          { withCredentials: true },
+        );
+        console.log(res);
+        navigate("/inbox");
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Something went wrong",
+        );
+      }
+    } else {
+      toast.error("Please login to create a conversation");
+    }
+  };
+
   return (
     <div className={`py-6 min-h-screen ${styles.section}`}>
-      {/* HEADER */}
+      {/* ================= HEADER ================= */}
       <div className="pt-12 sm:pt-0">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[#fff0f3] flex items-center justify-center">
-              <BsFillBagFill size={23} color="crimson" />
+        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+          {/* LEFT SIDE */}
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Icon */}
+            <div className="w-11 h-11 sm:w-12 sm:h-12 flex-shrink-0 rounded-full bg-[#fce7f3] flex items-center justify-center">
+              <BsFillBagFill size={22} color="#a30563" />
             </div>
 
-            <div>
-              <h1 className="text-[24px] md:text-[28px] font-[700] text-[#222]">
+            {/* Heading + Description */}
+            <div className="min-w-0">
+              <h1 className="text-[22px] sm:text-[24px] md:text-[28px] font-[700] text-[#222] leading-tight">
                 Order Details
               </h1>
 
-              <p className="text-[14px] text-gray-500">
+              <p className="mt-1 text-[13px] sm:text-[14px] text-gray-500 leading-5">
                 View complete information about this order
               </p>
             </div>
           </div>
-          <Link to="/">
+
+          {/* SEND MESSAGE BUTTON */}
+          <button
+            type="button"
+            className="w-full sm:w-auto"
+            onClick={handleSubmitMessage}
+          >
             <div
-              className={`${styles.button} !bg-[#e94560] !rounded-lg !h-[44px] px-5 text-white font-[600] text-[16px] flex items-center justify-center hover:!bg-[#d93650] transition`}
+              className={`
+          ${styles.button}
+          !w-full
+          sm:!w-[170px]
+          !h-[44px]
+          !rounded-lg
+          !bg-[#a30563]
+          hover:!bg-[#85004f]
+          px-5
+          text-white
+          font-[600]
+          text-[15px]
+          sm:text-[16px]
+          flex
+          items-center
+          justify-center
+          transition
+        `}
             >
               Send Message
             </div>
-          </Link>
+          </button>
         </div>
       </div>
+
       <br />
-      {/* ORDER INFO */}
+
+      {/* ================= ORDER INFO ================= */}
       <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 mt-5 p-5 md:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {/* Order ID */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
               <FaBoxOpen className="text-gray-600" />
@@ -131,12 +199,14 @@ const UserOrderDetails = () => {
 
             <div>
               <p className="text-[13px] text-gray-500">Order ID</p>
+
               <p className="text-[16px] font-[600] text-[#222]">
                 #{data?._id?.slice(0, 8)}
               </p>
             </div>
           </div>
 
+          {/* Placed On */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
               <FaCalendarAlt className="text-gray-600" />
@@ -144,6 +214,7 @@ const UserOrderDetails = () => {
 
             <div>
               <p className="text-[13px] text-gray-500">Placed On</p>
+
               <p className="text-[16px] font-[600] text-[#222]">
                 {data?.createdAt?.slice(0, 10)}
               </p>
@@ -152,12 +223,14 @@ const UserOrderDetails = () => {
         </div>
       </div>
 
-      {/* ORDER ITEMS */}
+      {/* ================= ORDER ITEMS HEADING ================= */}
       <div className="flex items-center gap-2 mb-5 mt-10">
-        <FaBoxOpen className="text-[#e94560]" size={20} />
+        <FaBoxOpen className="text-[#a30563]" size={20} />
 
         <h2 className="text-[20px] font-[700] text-[#222]">Order Items</h2>
       </div>
+
+      {/* ================= ORDER ITEMS ================= */}
       <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 mt-5 p-5 md:p-6">
         <div className="space-y-4">
           {data &&
@@ -207,8 +280,11 @@ const UserOrderDetails = () => {
                 {data?.status === "Delivered" &&
                   (item.isReviewed ? null : (
                     <div
-                      className={`${styles.button} !w-full sm:!w-[150px] !h-[42px] !bg-[#e94560] hover:!bg-[#d93650] !rounded-lg text-white font-[600] text-[15px] flex items-center justify-center cursor-pointer transition flex-shrink-0`}
-                      onClick={() => setOpen(true) || setSelectedItem(item)}
+                      className={`${styles.button} !w-full sm:!w-[150px] !h-[42px] bg-[#a30563] hover:bg-[#85004f] !rounded-lg text-white font-[600] text-[15px] flex items-center justify-center cursor-pointer transition flex-shrink-0`}
+                      onClick={() => {
+                        setOpen(true);
+                        setSelectedItem(item);
+                      }}
                     >
                       Write a Review
                     </div>
@@ -217,11 +293,11 @@ const UserOrderDetails = () => {
             ))}
         </div>
 
-        {/* REVIEW POPUP */}
+        {/* ================= REVIEW POPUP ================= */}
         {open && (
           <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-4">
             <div className="w-full max-w-[600px] max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl">
-              {/* HEADER */}
+              {/* Popup Header */}
               <div className="flex items-center justify-between px-5 md:px-6 py-4 border-b border-gray-100">
                 <div>
                   <h2 className="text-[22px] md:text-[26px] font-[700] text-[#222]">
@@ -238,16 +314,13 @@ const UserOrderDetails = () => {
                   onClick={() => setOpen(false)}
                   className="w-9 h-9 rounded-full bg-gray-100 hover:bg-[#fff0f3] flex items-center justify-center transition cursor-pointer"
                 >
-                  <RxCross1
-                    size={20}
-                    className="text-gray-600 hover:text-[#e94560]"
-                  />
+                  <RxCross1 size={20} className="text-black" />
                 </button>
               </div>
 
-              {/* CONTENT */}
+              {/* Popup Content */}
               <div className="p-5 md:p-6">
-                {/* PRODUCT */}
+                {/* Product */}
                 <div className="w-full flex items-center gap-4 p-4 rounded-xl bg-[#fafafa] border border-gray-100">
                   {/* Product Image */}
                   <div className="w-[75px] h-[75px] md:w-[85px] md:h-[85px] rounded-xl overflow-hidden bg-white border border-gray-200 flex-shrink-0">
@@ -275,7 +348,7 @@ const UserOrderDetails = () => {
                   </div>
                 </div>
 
-                {/* RATING */}
+                {/* ================= RATING ================= */}
                 <div className="mt-6">
                   <h5 className="text-[16px] md:text-[18px] font-[600] text-[#333]">
                     Give a Rating
@@ -311,7 +384,7 @@ const UserOrderDetails = () => {
                   </div>
                 </div>
 
-                {/* COMMENT */}
+                {/* ================= COMMENT ================= */}
                 <div className="mt-6">
                   <label className="block text-[16px] md:text-[18px] font-[600] text-[#333]">
                     Write a comment
@@ -326,11 +399,11 @@ const UserOrderDetails = () => {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="How was your product? Share your experience..."
-                    className="mt-3 w-full border border-gray-200 rounded-xl p-3 md:p-4 text-[15px] text-[#333] bg-[#fafafa] outline-none resize-none focus:bg-white focus:border-[#e94560] focus:ring-1 focus:ring-[#e94560]/20 transition"
+                    className="mt-3 w-full border border-gray-200 rounded-xl p-3 md:p-4 text-[15px] text-[#333] bg-[#fafafa] outline-none resize-none focus:bg-white focus:border-[#a30563] focus:ring-1 focus:ring-[#a30563]/20 transition"
                   />
                 </div>
 
-                {/* ACTIONS */}
+                {/* ================= ACTIONS ================= */}
                 <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
                   {/* Cancel */}
                   <button
@@ -348,7 +421,7 @@ const UserOrderDetails = () => {
                     onClick={rating > 0 ? reviewHandler : null}
                     className={`w-full sm:w-[140px] h-[44px] rounded-lg text-white font-[600] text-[15px] transition ${
                       rating > 0
-                        ? "bg-[#e94560] hover:bg-[#d93650] cursor-pointer"
+                        ? "bg-black hover:bg-gray-800 cursor-pointer"
                         : "bg-gray-300 cursor-not-allowed"
                     }`}
                   >
@@ -360,27 +433,25 @@ const UserOrderDetails = () => {
           </div>
         )}
 
-        {/* Total */}
+        {/* ================= TOTAL ================= */}
         <div className="border-t border-gray-200 mt-6 pt-5 flex justify-between items-center">
           <h3 className="text-[17px] md:text-[19px] font-[600] text-gray-600">
             Total Price
           </h3>
 
-          <h3 className="text-[22px] md:text-[24px] font-[700] text-[#e94560]">
+          <h3 className="text-[22px] md:text-[24px] font-[700] text-[#a30563]">
             US${data?.totalPrice}
           </h3>
         </div>
       </div>
 
-      {/* SHIPPING + PAYMENT */}
-
+      {/* ================= SHIPPING + PAYMENT ================= */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-5 mt-10 items-stretch">
-        {/* SHIPPING ADDRESS */}
-
+        {/* ================= SHIPPING ADDRESS ================= */}
         <div className="w-full flex flex-col">
-          {/* Heading Outside Card */}
+          {/* Heading */}
           <div className="flex items-center gap-2 mb-5">
-            <FaMapMarkerAlt className="text-[#e94560]" size={20} />
+            <FaMapMarkerAlt className="text-[#a30563]" size={20} />
 
             <h2 className="text-[20px] font-[700] text-[#222]">
               Shipping Address
@@ -390,6 +461,7 @@ const UserOrderDetails = () => {
           {/* Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6 flex-1">
             <div className="space-y-4">
+              {/* Address */}
               <div>
                 <p className="text-[13px] text-gray-500 mb-1">Address</p>
 
@@ -400,6 +472,7 @@ const UserOrderDetails = () => {
                 </p>
               </div>
 
+              {/* Country */}
               <div>
                 <p className="text-[13px] text-gray-500 mb-1">Country</p>
 
@@ -408,6 +481,7 @@ const UserOrderDetails = () => {
                 </p>
               </div>
 
+              {/* City */}
               <div>
                 <p className="text-[13px] text-gray-500 mb-1">City</p>
 
@@ -416,6 +490,7 @@ const UserOrderDetails = () => {
                 </p>
               </div>
 
+              {/* Phone */}
               <div>
                 <p className="text-[13px] text-gray-500 mb-1">Phone</p>
 
@@ -427,10 +502,9 @@ const UserOrderDetails = () => {
           </div>
         </div>
 
-        {/* PAYMENT INFORMATION */}
-
+        {/* ================= PAYMENT INFORMATION ================= */}
         <div className="w-full flex flex-col">
-          {/* Heading Outside Card */}
+          {/* Heading */}
           <div className="flex items-center gap-2 mb-5">
             <FaCreditCard className="text-blue-500" size={20} />
 
@@ -479,19 +553,23 @@ const UserOrderDetails = () => {
           </div>
         </div>
       </div>
+
+      {/* ================= REFUND BUTTON ================= */}
       {data && data.status === "Delivered" && (
         <div className="flex justify-center mt-10 mb-7" onClick={refundHandler}>
           <button
-            className="w-full sm:w-[320px] h-12 flex items-center justify-center bg-[#e94560] text-white rounded-lg uppercase font-semibold hover:bg-[#d93650] hover:shadow-md transition disabled:opacity-80"
+            className="w-full sm:w-[320px] h-12 flex items-center justify-center bg-[#a30563] text-white rounded-lg uppercase font-semibold hover:bg-[#85004f] hover:shadow-md transition disabled:opacity-80"
             type="submit"
           >
             Give a Refund
           </button>
         </div>
       )}
+
       {data && data.status !== "Delivered" && (
         <div>
-          <br /> <br />
+          <br />
+          <br />
         </div>
       )}
     </div>

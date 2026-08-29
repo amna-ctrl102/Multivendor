@@ -9,7 +9,8 @@ import {
 } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../redux/actions/product";
-import { backend_url } from "../../server";
+import { getAllEventsShop } from "../../redux/actions/event";
+import { backend_url, server } from "../../server";
 import {
   addToWishlist,
   removeFromWishlist,
@@ -17,20 +18,27 @@ import {
 import { addToCart } from "../../redux/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "../Ratings/Ratings";
+import axios from "axios";
 
 const ProductDetails = ({ data }) => {
   const { cart } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
 
   const { products } = useSelector((state) => state.products);
+  const { events } = useSelector((state) => state.events);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(getAllProductsShop(data && data.shop._id));
+    const shopId = data?.shop?._id;
+    if (shopId) {
+      dispatch(getAllProductsShop(shopId));
+      dispatch(getAllEventsShop(shopId));
+    }
   }, [dispatch, data]);
 
   const decrementCount = () => {
@@ -43,8 +51,35 @@ const ProductDetails = ({ data }) => {
     setCount(count + 1);
   };
 
-  const handleSubmitMessage = () => {
-    navigate("/inbox?converstaion=brf54985bvl5394902dt");
+  const handleSubmitMessage = async () => {
+    if (isAuthenticated) {
+      const userId = user._id;
+      const sellerId = data?.shop?._id;
+      const groupTitle = [userId, sellerId].sort().join("-");
+
+      try {
+        const res = await axios.post(
+          `${server}/conversation/create-new-conversation`,
+          {
+            groupTitle,
+            userId,
+            sellerId,
+          },
+          { withCredentials: true },
+        );
+        console.log(res);
+        navigate(`/inbox`);
+
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Something went wrong",
+        );
+      }
+    } else {
+      toast.error("Please login to create a conversation");
+    }
   };
 
   const addToCartHandler = (id) => {
@@ -80,9 +115,10 @@ const ProductDetails = ({ data }) => {
     dispatch(addToWishlist(data));
   };
 
-  const totalReviewsLength =
-    products &&
-    products.reduce((acc, product) => acc + (product?.reviews?.length || 0), 0);
+  const totalReviewsLength = [...(products || []), ...(events || [])].reduce(
+    (total, item) => total + (item?.reviews?.length || 0),
+    0,
+  );
 
   // product-level rating should come from the current product, not from all products of the shop
   const averageRatings = Number(data?.ratings || 0);
@@ -95,7 +131,7 @@ const ProductDetails = ({ data }) => {
             <div className="w-full flex flex-col 800px:flex-row gap-8">
               {/* Left Side */}
               <div className="w-full 800px:w-[40%]">
-                <div className="w-full border border-gray-300 rounded-lg p-3 mt-3">
+                <div className="w-full border border-[#a30563] rounded-lg p-3 mt-3">
                   <img
                     src={`${backend_url}${data && data.images[select]}`}
                     alt="Product"
@@ -111,7 +147,7 @@ const ProductDetails = ({ data }) => {
                         onClick={() => setSelect(index)}
                         className={`cursor-pointer border-2 rounded-lg flex-shrink-0 ${
                           select === index
-                            ? "border-blue-600"
+                            ? "border-[#a30563]"
                             : "border-gray-300"
                         }`}
                       >
@@ -148,18 +184,18 @@ const ProductDetails = ({ data }) => {
                   </h3>
                 </div>
                 <div className="flex items-center mt-4 justify-between pr-3">
-                  <div className="flex items-center mt-3">
+                  <div className="flex items-center mt-3 border border-gray-200">
                     <button
-                      className="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-500 text-white text-2xl font-bold rounded-l-md px-4 py-2 shadow-lg hover:opacity-75 transition duration-200 ease-in-out"
+                      className="w-12 h-12 bg-[#a30563] text-white text-2xl font-bold rounded-l-md px-4 py-2 shadow-lg hover:bg-[#85004f] transition"
                       onClick={decrementCount}
                     >
                       -
                     </button>
-                    <span className="w-12 h-12 flex items-center justify-center bg-gray-200 text-gray-800 font-medium text-lg">
+                    <span className="w-12 h-12 flex items-center justify-center bg-gray-50 text-gray-800 font-medium text-lg">
                       {count}
                     </span>
                     <button
-                      className="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-500 text-white text-2xl font-bold rounded-r-md px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      className="w-12 h-12 bg-[#a30563] text-white text-2xl font-bold rounded-r-md px-4 py-2 shadow-lg hover:bg-[#85004f] transition"
                       onClick={IncrementCount}
                     >
                       +
@@ -186,7 +222,7 @@ const ProductDetails = ({ data }) => {
                   </div>
                 </div>
                 <div
-                  className={`bg-black w-full 800px:w-full mt-8 rounded-lg h-11 flex items-center justify-center p-7`}
+                  className={`bg-black hover:bg-gray-800 transition w-full mt-8 rounded-lg h-11 flex items-center justify-center p-7 shadow-lg`}
                   onClick={() => addToCartHandler(data._id)}
                 >
                   <span className="text-white font-semibold flex items-center justify-center gap-1">
@@ -200,11 +236,11 @@ const ProductDetails = ({ data }) => {
                       <img
                         src={`${backend_url}${data?.shop?.avatar}`}
                         alt="ShopLogo"
-                        className="w-[60px] h-[60px] rounded-full mr-3"
+                        className="w-[60px] h-[60px] rounded-full mr-3 border-2 border-[#a30563]"
                       />
 
                       <div>
-                        <h3 className="text-[#333] font-semibold text-[18px] font-Roboto">
+                        <h3 className="text-[#a30563] font-semibold text-[18px] font-Roboto">
                           {data.shop.name}
                         </h3>
 
@@ -217,7 +253,7 @@ const ProductDetails = ({ data }) => {
 
                   {/* Right Side */}
                   <div
-                    className={`${styles.button} bg-blue-600 rounded-lg h-11 px-5 flex items-center justify-center w-full 800px:w-auto`}
+                    className={`${styles.button} shadow-md bg-[#a30563] transition hover:bg-[#85004f] rounded-lg h-11 px-5 flex items-center justify-center w-full 800px:w-auto`}
                     onClick={handleSubmitMessage}
                   >
                     <span className="text-white flex items-center gap-1">
@@ -231,13 +267,26 @@ const ProductDetails = ({ data }) => {
           </div>
         )}
       </div>
-    {data && <ProductDetailsInfo data={data} products={products} totalReviewsLength={totalReviewsLength} averageRatings={averageRatings} />}
+      {data && (
+        <ProductDetailsInfo
+          data={data}
+          products={products}
+          totalReviewsLength={totalReviewsLength}
+          averageRatings={averageRatings}
+        />
+      )}
     </>
   );
 };
 
-const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRatings }) => {
+const ProductDetailsInfo = ({
+  data,
+  products,
+  totalReviewsLength,
+  averageRatings,
+}) => {
   const [active, setActive] = useState(1);
+  const reviews = data?.reviews || [];
   return (
     <div className="bg-white w-[95%] max-w-[1400px] shadow-md rounded-xl mt-8 mb-8 mx-auto p-4 800px:p-6">
       <div className="w-full flex flex-wrap 800px:flex-nowrap justify-between border-b">
@@ -284,8 +333,8 @@ const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRatings
       ) : null}
       {active === 2 ? (
         <div className="w-full min-h-[40vh] flex flex-col items-center py-3 overflow-y-auto">
-          {data &&
-            data.reviews.map((item, index) => (
+          {reviews &&
+            reviews.map((item, index) => (
               <div className="w-full flex my-2">
                 <img
                   src={`${backend_url}${item.user.avatar}`}
@@ -303,9 +352,7 @@ const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRatings
             ))}
 
           <div className="w-full justify-center min-h-[40vh] flex items-center">
-            {data && data.reviews.length === 0 && (
-              <h5>No Reviews have for this product!</h5>
-            )}
+            {reviews.length === 0 && <h5>No Reviews have for this product!</h5>}
           </div>
         </div>
       ) : null}
@@ -317,12 +364,12 @@ const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRatings
               <div className="flex items-center">
                 <img
                   src={`${backend_url}${data.shop?.avatar}`}
-                  className="w-[60px] h-[60px] rounded-full"
+                  className="w-[60px] h-[60px] rounded-full border-2 border-[#a30563]"
                   alt="ShopLogo"
                 />
 
                 <div className="pl-3">
-                  <h3 className="text-[#333] font-semibold text-[18px] font-Roboto">
+                  <h3 className="text-[#a30563] font-semibold text-[18px] font-Roboto">
                     {data.shop.name}
                   </h3>
 
@@ -334,10 +381,7 @@ const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRatings
             </Link>
 
             <p className="pt-4 text-gray-600 leading-7">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quidem
-              cum quibusdam omnis a minima perspiciatis itaque magnam nesciunt,
-              porro saepe aspernatur repudiandae iusto sapiente, esse accusamus
-              eligendi! Vel, officia similique?
+              {data.shop.description ? data.shop.description : ""}
             </p>
           </div>
 
@@ -356,11 +400,12 @@ const ProductDetailsInfo = ({ data, products, totalReviewsLength, averageRatings
             </h5>
 
             <h5 className="font-semibold mt-4">
-              Total Reviews: <span className="font-normal">{totalReviewsLength}</span>
+              Total Reviews:{" "}
+              <span className="font-normal">{totalReviewsLength}</span>
             </h5>
 
             <Link to="/">
-              <div className="bg-black w-full 800px:w-full mt-8 rounded-lg h-11 flex items-center justify-center p-5">
+              <div className="bg-black hover:bg-gray-800 transition w-full 800px:w-full mt-8 rounded-lg h-11 flex items-center justify-center p-5">
                 <h4 className="text-white">Visit Shop</h4>
               </div>
             </Link>

@@ -75,7 +75,7 @@ const DashboardSideBar = ({ active }) => {
       id: 11,
       label: "Settings",
       icon: CiSettings,
-      link: "/dashboard-settings",
+      link: "/settings",
     },
   ];
 
@@ -100,14 +100,14 @@ const DashboardSideBar = ({ active }) => {
                 group
                 ${
                   isActive
-                    ? "bg-[#fff1f3] text-[#e94560]"
-                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#e94560]"
+                    ? "bg-[#fff1f3] text-[#077f9c]"
+                    : "text-[#64748b] hover:bg-[#f8fafc] hover:text-[#077f9c]"
                 }
               `}
             >
               {/* Active Indicator */}
               {isActive && (
-                <span className="absolute left-0 top-[11px] w-[4px] h-[30px] rounded-r-full bg-[#e94560]" />
+                <span className="absolute left-0 top-[11px] w-[4px] h-[30px] rounded-r-full bg-[#077f9c]" />
               )}
 
               <Icon
@@ -116,8 +116,8 @@ const DashboardSideBar = ({ active }) => {
                   shrink-0 transition-colors
                   ${
                     isActive
-                      ? "text-[#e94560]"
-                      : "text-[#64748b] group-hover:text-[#e94560]"
+                      ? "text-[#077f9c]"
+                      : "text-[#64748b] group-hover:text-[#077f9c]"
                   }
                 `}
               />
@@ -131,7 +131,7 @@ const DashboardSideBar = ({ active }) => {
                   whitespace-nowrap
                   ${
                     isActive
-                      ? "text-[#e94560]"
+                      ? "text-[#077f9c]"
                       : "text-[#475569]"
                   }
                 `}

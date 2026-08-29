@@ -11,7 +11,10 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getAllOrdersOfShop } from "../../../redux/actions/order";
-import { getAllProducts, getAllProductsShop } from "../../../redux/actions/product";
+import {
+  getAllProducts,
+  getAllProductsShop,
+} from "../../../redux/actions/product";
 import { backend_url, server } from "../../../server";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -19,10 +22,11 @@ import { toast } from "react-toastify";
 const OrderDetails = () => {
   const { orders } = useSelector((state) => state.order);
   const { seller } = useSelector((state) => state.seller);
+
   const [status, setStatus] = useState("");
 
   const dispatch = useDispatch();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const { id } = useParams();
 
   useEffect(() => {
@@ -35,6 +39,7 @@ const OrderDetails = () => {
 
   const paymentStatus = data?.paymentInfo?.status || "Not Paid";
 
+  // Order Status Update
   const orderStatusUpdateHandler = async () => {
     try {
       const res = await axios.put(
@@ -48,6 +53,7 @@ const OrderDetails = () => {
       );
 
       dispatch(getAllProducts());
+
       if (seller?._id) {
         dispatch(getAllProductsShop(seller._id));
       }
@@ -58,7 +64,9 @@ const OrderDetails = () => {
       toast.error(error?.response?.data?.message || error.message);
     }
   };
-  const refundOrderStatusUpdateHandler = async() => {
+
+  // Refund Status Update
+  const refundOrderStatusUpdateHandler = async () => {
     try {
       const res = await axios.put(
         `${server}/order/order-refund-success/${id}`,
@@ -71,6 +79,7 @@ const OrderDetails = () => {
       );
 
       dispatch(getAllProducts());
+
       if (seller?._id) {
         dispatch(getAllProductsShop(seller._id));
       }
@@ -84,12 +93,13 @@ const OrderDetails = () => {
 
   return (
     <div className={`py-6 min-h-screen ${styles.section}`}>
-      {/* HEADER */}
+      {/* ================= HEADER ================= */}
       <div>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          {/* Heading */}
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-[#fff0f3] flex items-center justify-center">
-              <BsFillBagFill size={23} color="crimson" />
+            <div className="w-12 h-12 rounded-full bg-[#f8e8f1] flex items-center justify-center">
+              <BsFillBagFill size={23} color="#a30563" />
             </div>
 
             <div>
@@ -103,9 +113,10 @@ const OrderDetails = () => {
             </div>
           </div>
 
+          {/* Order List Button */}
           <Link to="/dashboard-orders">
             <div
-              className={`${styles.button} !bg-[#e94560] !rounded-lg !h-[44px] px-5 text-white font-[600] text-[16px] flex items-center justify-center hover:!bg-[#ffe1e7] transition`}
+              className={`${styles.button} !bg-[#a30563] hover:!bg-[#85004f] !rounded-lg !h-[44px] px-5 text-white font-[600] text-[16px] flex items-center justify-center transition`}
             >
               Order List
             </div>
@@ -113,9 +124,10 @@ const OrderDetails = () => {
         </div>
       </div>
 
-      {/* ORDER INFO */}
+      {/* ================= ORDER INFO ================= */}
       <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 mt-7 p-5 md:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {/* Order ID */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
               <FaBoxOpen className="text-gray-600" />
@@ -123,12 +135,14 @@ const OrderDetails = () => {
 
             <div>
               <p className="text-[13px] text-gray-500">Order ID</p>
+
               <p className="text-[16px] font-[600] text-[#222]">
                 #{data?._id?.slice(0, 8)}
               </p>
             </div>
           </div>
 
+          {/* Date */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
               <FaCalendarAlt className="text-gray-600" />
@@ -136,6 +150,7 @@ const OrderDetails = () => {
 
             <div>
               <p className="text-[13px] text-gray-500">Placed On</p>
+
               <p className="text-[16px] font-[600] text-[#222]">
                 {data?.createdAt?.slice(0, 10)}
               </p>
@@ -144,12 +159,16 @@ const OrderDetails = () => {
         </div>
       </div>
 
-      {/* ORDER ITEMS */}
+      {/* ================= ORDER ITEMS HEADING ================= */}
       <div className="flex items-center gap-2 mb-5 mt-10">
-        <FaBoxOpen className="text-[#e94560]" size={20} />
+        <FaBoxOpen className="text-[#a30563]" size={20} />
 
-        <h2 className="text-[20px] font-[700] text-[#222]">Order Items</h2>
+        <h2 className="text-[20px] font-[700] text-[#222]">
+          Order Items
+        </h2>
       </div>
+
+      {/* ================= ORDER ITEMS ================= */}
       <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 mt-5 p-5 md:p-6">
         <div className="space-y-4">
           {data &&
@@ -178,14 +197,18 @@ const OrderDetails = () => {
                     {item.discountPrice
                       ? item.discountPrice
                       : item.originalPrice}
+
                     <span className="mx-2">×</span>
+
                     {item.qty}
                   </p>
                 </div>
 
                 {/* Item Total */}
                 <div className="text-right hidden sm:block">
-                  <p className="text-[13px] text-gray-500">Item Total</p>
+                  <p className="text-[13px] text-gray-500">
+                    Item Total
+                  </p>
 
                   <p className="text-[17px] font-[700] text-[#222]">
                     US$
@@ -198,26 +221,28 @@ const OrderDetails = () => {
             ))}
         </div>
 
-        {/* Total */}
+        {/* ================= TOTAL ================= */}
         <div className="border-t border-gray-200 mt-6 pt-5 flex justify-between items-center">
           <h3 className="text-[17px] md:text-[19px] font-[600] text-gray-600">
             Total Price
           </h3>
 
-          <h3 className="text-[22px] md:text-[24px] font-[700] text-[#e94560]">
+          <h3 className="text-[22px] md:text-[24px] font-[700] text-[#a30563]">
             US${data?.totalPrice}
           </h3>
         </div>
       </div>
-      {/* SHIPPING + PAYMENT */}
 
+      {/* ================= SHIPPING + PAYMENT ================= */}
       <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-5 mt-10 items-stretch">
-        {/* SHIPPING ADDRESS */}
-
+        {/* ================= SHIPPING ADDRESS ================= */}
         <div className="w-full flex flex-col">
-          {/* Heading Outside Card */}
+          {/* Heading */}
           <div className="flex items-center gap-2 mb-5">
-            <FaMapMarkerAlt className="text-[#e94560]" size={20} />
+            <FaMapMarkerAlt
+              className="text-[#a30563]"
+              size={20}
+            />
 
             <h2 className="text-[20px] font-[700] text-[#222]">
               Shipping Address
@@ -227,8 +252,11 @@ const OrderDetails = () => {
           {/* Card */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 md:p-6 flex-1">
             <div className="space-y-4">
+              {/* Address */}
               <div>
-                <p className="text-[13px] text-gray-500 mb-1">Address</p>
+                <p className="text-[13px] text-gray-500 mb-1">
+                  Address
+                </p>
 
                 <p className="text-[16px] font-[500] text-[#333]">
                   {data?.shippingAddress?.address1
@@ -237,24 +265,33 @@ const OrderDetails = () => {
                 </p>
               </div>
 
+              {/* Country */}
               <div>
-                <p className="text-[13px] text-gray-500 mb-1">Country</p>
+                <p className="text-[13px] text-gray-500 mb-1">
+                  Country
+                </p>
 
                 <p className="text-[16px] font-[500] text-[#333]">
                   {data?.shippingAddress?.country}
                 </p>
               </div>
 
+              {/* City */}
               <div>
-                <p className="text-[13px] text-gray-500 mb-1">City</p>
+                <p className="text-[13px] text-gray-500 mb-1">
+                  City
+                </p>
 
                 <p className="text-[16px] font-[500] text-[#333]">
                   {data?.shippingAddress?.city}
                 </p>
               </div>
 
+              {/* Phone */}
               <div>
-                <p className="text-[13px] text-gray-500 mb-1">Phone</p>
+                <p className="text-[13px] text-gray-500 mb-1">
+                  Phone
+                </p>
 
                 <p className="text-[16px] font-[500] text-[#333]">
                   {data?.user?.phoneNumber}
@@ -264,10 +301,9 @@ const OrderDetails = () => {
           </div>
         </div>
 
-        {/* PAYMENT INFORMATION */}
-
+        {/* ================= PAYMENT INFORMATION ================= */}
         <div className="w-full flex flex-col">
-          {/* Heading Outside Card */}
+          {/* Heading */}
           <div className="flex items-center gap-2 mb-5">
             <FaCreditCard className="text-blue-500" size={20} />
 
@@ -281,7 +317,9 @@ const OrderDetails = () => {
             <div className="space-y-5">
               {/* Payment Status */}
               <div>
-                <p className="text-[13px] text-gray-500 mb-2">Payment Status</p>
+                <p className="text-[13px] text-gray-500 mb-2">
+                  Payment Status
+                </p>
 
                 <span
                   className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-[14px] font-[600] ${
@@ -291,13 +329,16 @@ const OrderDetails = () => {
                   }`}
                 >
                   <FaCheckCircle size={14} />
+
                   {paymentStatus}
                 </span>
               </div>
 
               {/* Payment Method */}
               <div>
-                <p className="text-[13px] text-gray-500">Payment Method</p>
+                <p className="text-[13px] text-gray-500">
+                  Payment Method
+                </p>
 
                 <p className="text-[16px] font-[600] text-[#333] mt-1">
                   {data?.paymentInfo?.type || "Not Available"}
@@ -306,7 +347,9 @@ const OrderDetails = () => {
 
               {/* Payment ID */}
               <div>
-                <p className="text-[13px] text-gray-500">Payment ID</p>
+                <p className="text-[13px] text-gray-500">
+                  Payment ID
+                </p>
 
                 <p className="text-[14px] font-[500] text-[#555] mt-1 break-all">
                   {data?.paymentInfo?.id || "Not Available"}
@@ -317,14 +360,18 @@ const OrderDetails = () => {
         </div>
       </div>
 
-      {/* ORDER STATUS */}
-
+      {/* ================= ORDER STATUS ================= */}
       <div className="w-full mt-10">
-        {/* Heading Outside Card */}
+        {/* Heading */}
         <div className="flex items-center gap-2 mb-5">
-          <FaBoxOpen className="text-[#e94560]" size={20} />
+          <FaBoxOpen
+            className="text-[#a30563]"
+            size={20}
+          />
 
-          <h2 className="text-[20px] font-[700] text-[#222]">Order Status</h2>
+          <h2 className="text-[20px] font-[700] text-[#222]">
+            Order Status
+          </h2>
         </div>
 
         {/* Status Card */}
@@ -342,18 +389,22 @@ const OrderDetails = () => {
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="w-full sm:w-[320px] h-[45px] px-3 border border-gray-200 rounded-lg bg-[#fafafa] text-[15px] text-[#333] outline-none focus:border-[#e94560] focus:ring-1 focus:ring-[#e94560] transition cursor-pointer"
+                className="w-full sm:w-[320px] h-[45px] px-3 border border-gray-200 rounded-lg bg-[#fafafa] text-[15px] text-[#333] outline-none focus:border-[#a30563] focus:ring-1 focus:ring-[#a30563] transition cursor-pointer"
               >
                 {data?.status === "Processing refund" ||
                 data?.status === "Refund Success"
                   ? ["Processing refund", "Refund Success"]
                       .slice(
-                        ["Processing refund", "Refund Success"].indexOf(
-                          data?.status,
-                        ),
+                        [
+                          "Processing refund",
+                          "Refund Success",
+                        ].indexOf(data?.status),
                       )
                       .map((option, index) => (
-                        <option value={option} key={index}>
+                        <option
+                          value={option}
+                          key={index}
+                        >
                           {option}
                         </option>
                       ))
@@ -376,7 +427,10 @@ const OrderDetails = () => {
                         ].indexOf(data?.status),
                       )
                       .map((option, index) => (
-                        <option value={option} key={index}>
+                        <option
+                          value={option}
+                          key={index}
+                        >
                           {option}
                         </option>
                       ))}
@@ -384,10 +438,10 @@ const OrderDetails = () => {
 
               {/* Update Button */}
               <div
-                className={`${styles.button} !w-full sm:!w-[160px] !h-[45px] !bg-[#fce1e6] hover:!bg-[#ffe1e7] !rounded-lg text-[#e94560] font-[600] text-[16px] flex items-center justify-center cursor-pointer transition`}
+                className={`${styles.button} !w-full sm:!w-[160px] !h-[45px] !bg-[#a30563] hover:!bg-[#85004f] !rounded-lg text-white font-[600] text-[16px] flex items-center justify-center cursor-pointer transition`}
                 onClick={
                   data?.status === "Processing refund"
-                    ?refundOrderStatusUpdateHandler
+                    ? refundOrderStatusUpdateHandler
                     : orderStatusUpdateHandler
                 }
               >

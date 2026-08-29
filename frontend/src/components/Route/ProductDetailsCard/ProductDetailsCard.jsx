@@ -8,46 +8,100 @@ import {
   AiOutlineShoppingCart,
 } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import { backend_url } from "../../../server";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { backend_url, server } from "../../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { addToCart } from "../../../redux/actions/cart";
-import { addToWishlist, removeFromWishlist } from "../../../redux/actions/wishlist";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../../redux/actions/wishlist";
 
 const ProductDetailsCard = ({ setOpen, data }) => {
   const { cart } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+
   const [count, setCount] = useState(1);
-  const [click, setClick] = useState();
+  const [click, setClick] = useState(false);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const handleMessageSubmit = () => {};
+  const handleMessageSubmit = async () => {
+    if (isAuthenticated && user?._id) {
+      const userId = user._id;
+      const sellerId = data?.shop?._id;
 
+      if (!sellerId) {
+        toast.error("Seller information is not available");
+        return;
+      }
+
+      const groupTitle = [userId, sellerId].sort().join("-");
+
+      try {
+        const res = await axios.post(
+          `${server}/conversation/create-new-conversation`,
+          {
+            groupTitle,
+            userId,
+            sellerId,
+          },
+          { withCredentials: true },
+        );
+        console.log(res);
+        navigate("/inbox");
+      } catch (error) {
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Something went wrong",
+        );
+      }
+    } else {
+      toast.error("Please login to create a conversation");
+    }
+  };
+
+  // Decrease quantity
   const decrementCount = () => {
     if (count > 1) {
       setCount(count - 1);
     }
   };
 
+  // Increase quantity
   const IncrementCount = () => {
-    setCount(count + 1);
-  };
-
-  const addToCartHandler = (id) => {
-    const isItemExists = cart && cart.find((i) => i._id === id);
-    if (isItemExists) {
-      toast.error("Item is already in cart!");
+    if (count < data.stock) {
+      setCount(count + 1);
     } else {
-      if (data.stock < count) {
-        toast.error("product stock limited!");
-      } else {
-        const cartData = { ...data, qty: count };
-        dispatch(addToCart(cartData));
-        toast.success("Item added to cart successfully!");
-      }
+      toast.error("Product stock is limited!");
     }
   };
 
+  // Add to cart
+  const addToCartHandler = (id) => {
+    const isItemExists = cart && cart.find((i) => i._id === id);
+
+    if (isItemExists) {
+      toast.error("Item is already in cart!");
+    } else if (data.stock < count) {
+      toast.error("Product stock is limited!");
+    } else {
+      const cartData = {
+        ...data,
+        qty: count,
+      };
+
+      dispatch(addToCart(cartData));
+      toast.success("Item added to cart successfully!");
+    }
+  };
+
+  // Wishlist check
   useEffect(() => {
     if (data && wishlist && wishlist.find((i) => i._id === data._id)) {
       setClick(true);
@@ -56,123 +110,368 @@ const ProductDetailsCard = ({ setOpen, data }) => {
     }
   }, [wishlist, data]);
 
-  const removeFromWishlistHandler = (data) => {
-    setClick(!click);
-    dispatch(removeFromWishlist(data));
+  // Remove from wishlist
+  const removeFromWishlistHandler = (product) => {
+    setClick(false);
+    dispatch(removeFromWishlist(product));
   };
 
-  const addToWishlistHandler = (data) => {
-    setClick(!click);
-    dispatch(addToWishlist(data));
+  // Add to wishlist
+  const addToWishlistHandler = (product) => {
+    setClick(true);
+    dispatch(addToWishlist(product));
   };
 
   return (
-    <div className="bg-[#fff]">
+    <div>
       {data ? (
-        <div className="fixed w-full h-screen top-0 left-0 bg-[#00000030] z-40 flex items-center justify-center">
-          <div className="w-[90%] 800px:w-[60%] h-[80vh] overflow-y-auto bg-white rounded-md shadow-sm relative p-4 800px:mt-10">
-            <RxCross1
-              size={22}
-              className="absolute right-1 top-3 z-50 800px:right-3"
+        <div className="fixed inset-0 z-40 flex items-start 800px:items-center justify-center bg-black/70 p-3 pt-20 800px:p-5">
+          {/* Modal */}
+          <div className="relative w-full max-w-[1000px] max-h-[90vh] overflow-y-auto hide-scrollbar rounded-xl bg-white shadow-2xl">
+            {/* Close Button */}
+            <button
+              type="button"
               onClick={() => setOpen(false)}
-            />
-            <div className="block w-full 800px:flex">
-              <div className="w-full 800px:w-[50%]">
-                <img
-                  src={`${backend_url}${data.images && data.images[0]}`}
-                  alt="ProductDetailsCardImage"
-                  className="w-[95%] object-cover"
-                />
-                <div className="flex mt-3">
-                  <Link
-                    to={`/shop/preview/${data.shop._id}`}
-                    className="flex mt-3"
-                  >
-                    <img
-                      src={`${backend_url}${data?.shop?.avatar}`}
-                      alt="shopImage"
-                      className="w-[50px] h-[50px] rounded-full mr-2 mt-3"
-                    />
-                    <div>
-                      <h3 className={`${styles.shop_name}`}>
-                        {data?.shop?.name}
-                      </h3>
-                      <h5 className="pb-5 text-[15px]">(4/5) Ratings</h5>
-                    </div>
-                  </Link>
-                </div>
+              className="
+                absolute
+                right-3
+                top-3
+                z-50
+                flex
+                h-10
+                w-10
+                items-center
+                justify-center
+                rounded-full
+                bg-gray-100
+                text-black
+                shadow-md
+              "
+            >
+              <RxCross1 size={20} />
+            </button>
+
+            {/* Main Content */}
+            <div className="flex flex-col 800px:flex-row">
+              {/* LEFT SIDE */}
+              <div className="w-full p-5 sm:p-7 800px:w-1/2">
+                {/* Product Image */}
                 <div
-                  className={`${styles.button} w-full 800px:w-auto mt-3 rounded-md h-11 px-5 flex items-center justify-center cursor-pointer`}
-                  onClick={handleMessageSubmit}
+                  className="
+                  flex
+                  min-h-[280px]
+                  items-center
+                  justify-center
+                  rounded-xl
+                  bg-[#f6f6f6]
+                  p-4
+                  sm:min-h-[400px]
+                "
                 >
-                  <span className="text-white flex items-center gap-2 text-sm 800px:text-base font-medium">
-                    Send Message
-                    <AiOutlineMessage />
-                  </span>
+                  <img
+                    src={`${backend_url}${data.images?.[0]}`}
+                    alt={data.name}
+                    className="
+                      max-h-[380px]
+                      w-full
+                      object-contain
+                    "
+                  />
                 </div>
-                <h5 className="text-[16px] text-[red]">
-                  ({data.sold_out}) Sold out
-                </h5>
+
+                {/* Shop Information */}
+                <Link
+                  to={`/shop/preview/${data.shop?._id}`}
+                  className="
+                    mt-5
+                    flex
+                    items-center
+                    gap-3
+                    rounded-lg
+                    border
+                    border-gray-100
+                    p-3
+                    transition
+                    hover:bg-gray-50
+                  "
+                >
+                  <img
+                    src={`${backend_url}${data?.shop?.avatar}`}
+                    alt="shopImage"
+                    className="
+                      h-[52px]
+                      w-[52px]
+                      rounded-full
+                      border-2
+                      border-[#a30563]
+                      object-cover
+                    "
+                  />
+
+                  <div>
+                    <h3 className={`${styles.shop_name} !text-[#a30563] !mb-1`}>
+                      {data?.shop?.name}
+                    </h3>
+
+                    <p className="text-sm">(4/5) Ratings</p>
+                  </div>
+                </Link>
+
+                {/* Send Message + Sold */}
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  {/* Send Message Button */}
+                  <button
+                    type="button"
+                    onClick={handleMessageSubmit}
+                    className="
+                      flex
+                      h-[48px]
+                      w-full 800px:w-[220px]
+                      items-center
+                      justify-center
+                      gap-2
+                      rounded-lg
+                      px-3
+                      text-sm
+                      font-medium
+                      text-white
+                      shadow-md
+                      bg-[#a30563] transition hover:bg-[#85004f]
+                      sm:text-base
+                    "
+                  >
+                    Send Message
+                    <AiOutlineMessage size={20} />
+                  </button>
+
+                  {/* Sold */}
+                  <div>
+                    <p
+                      className="
+                      whitespace-nowrap
+                      text-sm
+                      font-semibold
+                      text-[#a30563]
+                      sm:text-base
+                    "
+                    >
+                      {data.sold_out || 0} Sold
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="w-full 800px:w-[50%] pt-5 pl-[5px] pr-[5px]">
-                <h1 className={`${styles.productTitle} text-[20px]`}>
+
+              {/* RIGHT SIDE */}
+              <div
+                className="
+                w-full
+                p-5
+                sm:p-7
+                800px:w-1/2
+              "
+              >
+                {/* Product Name */}
+                <h1
+                  className="
+                  pr-10
+                  text-[24px]
+                  font-bold
+                  leading-tight
+                  text-[#222]
+                  sm:text-[28px]
+                "
+                >
                   {data.name}
                 </h1>
-                <p>{data.description}</p>
-                <div className="flex pt-3 mt-2">
-                  <h4 className={`${styles.productDiscountPrice}`}>
-                    {data.discountPrice}$
+
+                {/* Description */}
+                <p
+                  className="
+                  mt-4
+                  text-[14px]
+                  leading-6
+                  text-gray-600
+                  sm:text-[15px]
+                "
+                >
+                  {data.description}
+                </p>
+
+                {/* Prices */}
+                <div
+                  className="
+                  mt-6
+                  flex
+                  flex-wrap
+                  items-center
+                  gap-3
+                "
+                >
+                  <h4
+                    className="
+                    text-[25px]
+                    font-bold
+                    text-black
+                  "
+                  >
+                    ${data.discountPrice}
                   </h4>
-                  <h3 className={`${styles.price}`}>
-                    {data.originalPrice ? data.originalPrice + " $" : null}
-                  </h3>
-                </div>
-                <div className="flex items-center mt-6 justify-between pr-3">
-                  <div className="flex items-center mt-5">
-                    <button
-                      className="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-l-md px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
-                      onClick={decrementCount}
+
+                  {data.originalPrice && (
+                    <h3
+                      className="
+                      text-[16px]
+                      text-red-600
+                      line-through
+                    "
                     >
-                      -
+                      ${data.originalPrice}
+                    </h3>
+                  )}
+                </div>
+
+                {/* Quantity + Wishlist */}
+                <div
+                  className="
+                  mt-7
+                  flex
+                  items-center
+                  justify-between
+                  gap-4
+                "
+                >
+                  {/* Quantity */}
+                  <div
+                    className="
+                    flex
+                    overflow-hidden
+                    rounded-lg
+                    border
+                    border-gray-200
+                    shadow-sm
+                  "
+                  >
+                    {/* Minus */}
+                    <button
+                      type="button"
+                      onClick={decrementCount}
+                      className="
+                        flex
+                        h-11
+                        w-11
+                        items-center
+                        justify-center
+                        bg-[#a30563]
+                        text-xl
+                        font-bold
+                        text-white
+                        transition
+                        hover:bg-[#85004f]
+                      "
+                    >
+                      −
                     </button>
-                    <span className="w-12 h-12 flex items-center justify-center bg-gray-200 text-gray-800 font-medium text-lg">
+
+                    {/* Count */}
+                    <span
+                      className="
+                      flex
+                      h-11
+                      w-12
+                      items-center
+                      justify-center
+                      bg-gray-50
+                      font-semibold
+                      text-gray-800
+                    "
+                    >
                       {count}
                     </span>
+
+                    {/* Plus */}
                     <button
-                      className="w-12 h-12 bg-gradient-to-r from-teal-400 to-teal-500 text-white font-bold rounded-r-md px-4 py-2 shadow-lg hover:opacity-75 transition duration-300 ease-in-out"
+                      type="button"
                       onClick={IncrementCount}
+                      className="
+                        flex
+                        h-11
+                        w-11
+                        items-center
+                        justify-center
+                        bg-[#a30563]
+                        text-xl
+                        font-bold
+                        text-white
+                        transition
+                        hover:bg-[#85004f]
+                      "
                     >
                       +
                     </button>
                   </div>
-                  <div className="mt-5">
+
+                  {/* Wishlist */}
+                  <button
+                    type="button"
+                    className="
+                      flex
+                      h-11
+                      w-11
+                      items-center
+                      justify-center
+                      rounded-full
+                      border
+                      border-gray-200
+                      transition
+                      hover:bg-gray-50
+                    "
+                    onClick={() =>
+                      click
+                        ? removeFromWishlistHandler(data)
+                        : addToWishlistHandler(data)
+                    }
+                  >
                     {click ? (
                       <AiFillHeart
-                        size={30}
-                        className="cursor-pointer"
-                        onClick={() => removeFromWishlistHandler(data)}
-                        color={click ? "red" : "#333"}
-                        title="Remove from wishList"
+                        size={27}
+                        color="#ef4444"
+                        title="Remove from wishlist"
                       />
                     ) : (
                       <AiOutlineHeart
-                        size={30}
-                        className="cursor-pointer"
-                        onClick={() => addToWishlistHandler(data)}
-                        color={click ? "red" : "#333"}
-                        title="Add to wishList"
+                        size={27}
+                        color="#333"
+                        title="Add to wishlist"
                       />
                     )}
-                  </div>
+                  </button>
                 </div>
-                <div
-                  className={`${styles.button} w-full 800px:w-auto mt-6 rounded-md h-11 px-5 flex items-center justify-center cursor-pointer`}
+
+                {/* Add to Cart */}
+                <button
+                  type="button"
                   onClick={() => addToCartHandler(data._id)}
+                  className="
+                    mt-7
+                    flex
+                    h-[52px]
+                    w-full
+                    items-center
+                    justify-center
+                    gap-3
+                    rounded-lg
+                    bg-black
+                    text-[16px]
+                    font-semibold
+                    text-white
+                    shadow-lg
+                    hover:bg-gray-800 transition
+                    sm:text-[17px]
+                  "
                 >
-                  <span className="text-white flex items-center gap-2 text-sm 800px:text-base font-medium">
-                    Add to cart <AiOutlineShoppingCart />
-                  </span>
-                </div>
+                  Add to Cart
+                  <AiOutlineShoppingCart size={22} />
+                </button>
               </div>
             </div>
           </div>

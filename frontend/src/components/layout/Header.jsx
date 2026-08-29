@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ShopLogo from "../../Assests/ShopLogo.png";
 import styles from "../../styles/styles";
 import { Link } from "react-router-dom";
 import { categoriesData } from "../../static/data";
@@ -68,8 +69,9 @@ const Header = ({ activeHeading }) => {
           <div>
             <Link to="/">
               <img
-                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
+                src={ShopLogo}
                 alt="Logoimage"
+                className="w-[220px] h-auto object-contain"
               />
             </Link>
           </div>
@@ -80,7 +82,7 @@ const Header = ({ activeHeading }) => {
               placeholder="Search Product..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
+              className="h-[40px] w-full px-2 border-2 border-black rounded-md"
             />
             <AiOutlineSearch
               size={30}
@@ -106,7 +108,9 @@ const Header = ({ activeHeading }) => {
               </div>
             ) : null}
           </div>
-          <div className={`${styles.button}`}>
+          <div
+            className={`${styles.button} !rounded-lg hover:bg-gray-800 transition mt-5 shadow-md`}
+          >
             {isSeller ? (
               <Link to="/dashboard">
                 <h1 className="text-[#fff] flex items-center">
@@ -124,7 +128,7 @@ const Header = ({ activeHeading }) => {
         </div>
       </div>
       <div
-        className={`${active === true ? "shadow-sm fixed top-0 left-0 z-10" : null} transition hidden 800px:flex items-center justify-between w-full bg-[#3321c8] h-[70px]`}
+        className={`${active === true ? "shadow-sm fixed top-0 left-0 z-10" : null} transition hidden 800px:flex items-center justify-between w-full bg-[#a30563] h-[70px]`}
       >
         <div
           className={`${styles.section} relative ${styles.normalFlex} justify-between`}
@@ -221,11 +225,7 @@ const Header = ({ activeHeading }) => {
           </div>
           <div>
             <Link to="/">
-              <img
-                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-                alt=""
-                className="cursor-pointer w-[120px]"
-              />
+              <img src={ShopLogo} alt="" className="cursor-pointer w-[120px]" />
             </Link>
           </div>
           <div className="flex gap-3">
@@ -235,7 +235,7 @@ const Header = ({ activeHeading }) => {
             >
               <AiOutlineHeart size={28} />
               <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 p-0 m-0 text-white font-mono text-[12px] leading-tight text-center">
-                0
+                {wishlist && wishlist.length}
               </span>
             </div>
             <div
@@ -248,6 +248,11 @@ const Header = ({ activeHeading }) => {
               </span>
             </div>
           </div>
+          {/* Cart Popup */}
+          {openCart && <Cart setOpenCart={setOpenCart} />}
+
+          {/* Wishlist Popup */}
+          {openWishList && <Wishlist setWishList={setOpenWishList} />}
         </div>
       </div>
 
@@ -269,7 +274,7 @@ const Header = ({ activeHeading }) => {
                 placeholder="Search Product..."
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
+                className="h-[40px] w-full px-2 border-black border-[2px] rounded-md"
               />
               <AiOutlineSearch
                 size={20}
@@ -298,7 +303,7 @@ const Header = ({ activeHeading }) => {
 
             <Navbar active={activeHeading} />
             <div
-              className={`h-[40px] w-[90%] rounded-md bg-black flex items-center justify-center ml-4`}
+              className={`h-[40px] w-[90%] rounded-lg bg-black flex items-center justify-center ml-4 hover:bg-gray-800 transition`}
             >
               {isSeller ? (
                 <Link to="/dashboard">
@@ -323,7 +328,7 @@ const Header = ({ activeHeading }) => {
                     <img
                       src={`${backend_url}${user.avatar}`}
                       alt="profileImage"
-                      className="w-[60px] h-[60px] rounded-full object-cover border-[2px] border-[#3ad132]"
+                      className="w-[60px] h-[60px] rounded-full object-cover border-[2px] border-[#a30563]"
                     />
                   </Link>
                 </div>

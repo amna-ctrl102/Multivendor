@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 import { addToCart } from "../../../redux/actions/cart.js";
 import Ratings from "../../Ratings/Ratings.jsx";
 
-const ProductCard = ({ data }) => {
+const ProductCard = ({ data, isEvent }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
   const [click, setClick] = useState(false);
@@ -63,7 +63,13 @@ const ProductCard = ({ data }) => {
     <>
       <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
         <div className="flex justify-end"></div>
-        <Link to={`/product/${data._id}`}>
+        <Link
+          to={
+            isEvent
+              ? `/product/${data._id}?isEvent=true`
+              : `/product/${data._id}`
+          }
+        >
           <img
             src={`${backend_url}${data.images && data.images[0]}`}
             alt="ProductsImage"
@@ -71,9 +77,17 @@ const ProductCard = ({ data }) => {
           />
         </Link>
         <Link to={`/shop/preview/${data.shop._id}`}>
-          <h5 className={`${styles.shop_name}`}>{data?.shop?.name}</h5>
+          <h5 className={`${styles.shop_name} !text-[#a30563]`}>
+            {data?.shop?.name}
+          </h5>
         </Link>
-        <Link to={`/product/${data._id}`}>
+        <Link
+          to={
+            isEvent
+              ? `/product/${data._id}?isEvent=true`
+              : `/product/${data._id}`
+          }
+        >
           <h4 className="pb-3 font-[500]">
             {data.name.length > 40 ? data.name.slice(0, 40) + "..." : data.name}
           </h4>
@@ -83,16 +97,17 @@ const ProductCard = ({ data }) => {
           <div className="py-2 flex items-center justify-between">
             <div className="flex">
               <h5 className={`${styles.productDiscountPrice}`}>
-                {data.discountPrice === 0
-                  ? data.originalPrice
-                  : data.discountPrice}
-                $
+                {data.discountPrice ? data.discountPrice : data.originalPrice}$
               </h5>
-              <h4 className={`${styles.price}`}>
-                {data.originalPrice ? data.originalPrice + " $" : null}
-              </h4>
+              {data.discountPrice ? (
+                <h4 className={`${styles.price}`}>
+                  {data.originalPrice ? data.originalPrice + " $" : null}
+                </h4>
+              ) : (
+                ""
+              )}
             </div>
-            <span className="text-[17px] font-[400] text-[#68d284]">
+            <span className="text-[17px] font-[400] text-[#a30563]">
               {data.sold_out}sold
             </span>
           </div>

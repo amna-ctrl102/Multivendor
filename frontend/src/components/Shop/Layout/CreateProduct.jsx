@@ -60,18 +60,18 @@ const CreateProduct = () => {
   };
 
   return (
-    <div className="w-full min-h-[calc(100vh-80px)] p-3 sm:p-5 lg:p-8">
-      <div className="w-full max-w-[900px] mx-auto">
-        <div className="w-full bg-white rounded-2xl border border-[#edf0f4] shadow-[0_4px_20px_rgba(15,23,42,0.05)] overflow-hidden">
-          {/* Header */}
-          <div className="px-5 sm:px-8 pt-6 pb-4 border-b border-[#edf0f4]">
+    <div className="w-full h-[calc(100vh-72px)] p-3 sm:p-5 lg:p-8 overflow-hidden">
+      <div className="w-full max-w-[900px] h-full mx-auto">
+        <div className="w-full h-full bg-white rounded-2xl border border-[#edf0f4] shadow-[0_4px_20px_rgba(15,23,42,0.05)] overflow-hidden flex flex-col">
+          {/* Header - FIXED */}
+          <div className="shrink-0 px-5 sm:px-8 pt-6 pb-4 border-b border-[#edf0f4]">
             <h5 className="text-[24px] sm:text-[28px] text-center font-Poppins font-[600] text-[#1f2937]">
               Create Product
             </h5>
           </div>
 
-          {/* Form */}
-          <div className="max-h-[calc(100vh-190px)] overflow-y-auto hide-scrollbar hide-scrollbar::-webkit-scrollbar px-5 sm:px-8 py-6">
+          {/* Form Area - ONLY THIS SCROLLS */}
+          <div className="flex-1 min-h-0 overflow-y-auto hide-scrollbar px-5 sm:px-8 py-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Product Name */}
               <div>
@@ -150,7 +150,6 @@ const CreateProduct = () => {
 
               {/* Prices */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                {/* Original Price */}
                 <div>
                   <label className="block text-[14px] font-[500] text-[#374151] mb-2">
                     Original Price <span className="text-red-500">*</span>
@@ -167,7 +166,6 @@ const CreateProduct = () => {
                   />
                 </div>
 
-                {/* Discount Price */}
                 <div>
                   <label className="block text-[14px] font-[500] text-[#374151] mb-2">
                     Price{" "}
@@ -220,7 +218,6 @@ const CreateProduct = () => {
                 />
 
                 <div className="flex flex-wrap items-center gap-3">
-                  {/* Upload Button */}
                   <label
                     htmlFor="upload"
                     className="w-[100px] h-[100px] border-2 border-dashed border-[#cbd5e1] rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-[#077f9c] hover:bg-[#f8fcfd] transition"
@@ -232,7 +229,6 @@ const CreateProduct = () => {
                     </span>
                   </label>
 
-                  {/* Preview Images */}
                   {images &&
                     images.map((i) => (
                       <img
@@ -246,7 +242,7 @@ const CreateProduct = () => {
               </div>
 
               {/* Submit */}
-              <div className="pt-2">
+              <div className="pt-2 pb-2">
                 <button
                   type="submit"
                   className="w-full h-[48px] rounded-lg bg-[#077f9c] hover:bg-[#066f88] text-white text-[15px] font-[600] transition duration-200 shadow-sm hover:shadow-md"

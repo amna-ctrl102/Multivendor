@@ -273,12 +273,11 @@ router.delete(
         },
       );
 
-      const user= await User.findById(userId);
+      const user = await User.findById(userId);
       res.status(200).json({
         success: true,
         user,
-      })
-
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -286,30 +285,44 @@ router.delete(
 );
 
 // upadate user password
-router.put("/update-password", isAuthenticated, async(req,res,next)=>{
-  try{
-    const user= await User.findById(req.user._id).select("+password");
+router.put("/update-password", isAuthenticated, async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).select("+password");
 
-    const isPassword= await user.comparePassword(req.body.oldPassword);
-    if(!isPassword){
+    const isPassword = await user.comparePassword(req.body.oldPassword);
+    if (!isPassword) {
       return next(new ErrorHandler("Old password is incorrect!", 404));
     }
 
-    if(req.body.newPassword !== req.body.confirmPassword){
-      return next(new ErrorHandler("Password doesn't match with each other", 404));
+    if (req.body.newPassword !== req.body.confirmPassword) {
+      return next(
+        new ErrorHandler("Password doesn't match with each other", 404),
+      );
     }
 
-    user.password=req.body.newPassword;
+    user.password = req.body.newPassword;
     await user.save();
 
     res.status(200).json({
-      success:true,
-      message:"Password updated successfully!",
-    })
-
-  }catch(error){
+      success: true,
+      message: "Password updated successfully!",
+    });
+  } catch (error) {
     return next(new ErrorHandler(error.message, 500));
   }
-})
+});
+
+router.get("/user-info/:id", async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    res.status(201).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
+  }
+});
 
 module.exports = router;

@@ -24,7 +24,7 @@ const Faq = () => {
     }
   };
   return (
-    <div className={`${styles.section} my-8 mb-12`}>
+    <div className={`${styles.section} my-8 mb-12 mt-20 800px:mt-8`}>
       <h2 className="text-3xl font-bold text-gray-900 mb-8">FAQ</h2>
       <div className="mx-auto space-y-4">
         {/* single FAQ */}
@@ -130,7 +130,7 @@ const Faq = () => {
             className="flex items-center justify-between w-full"
             onClick={() => toogleTab(3)}
           >
-            <span className="text-lg font-medium text-gray-900">
+            <span className="text-lg text-left font-medium text-gray-900">
               How do I contact customer support?
             </span>
             {activeTab === 3 ? (
@@ -178,7 +178,7 @@ const Faq = () => {
             className="flex items-center justify-between w-full"
             onClick={() => toogleTab(4)}
           >
-            <span className="text-lg font-medium text-gray-900">
+            <span className="text-lg text-left font-medium text-gray-900">
               Can I change or cancel my order?
             </span>
             {activeTab === 4 ? (
@@ -227,7 +227,7 @@ const Faq = () => {
             className="flex items-center justify-between w-full"
             onClick={() => toogleTab(5)}
           >
-            <span className="text-lg font-medium text-gray-900">
+            <span className="text-lg text-left font-medium text-gray-900">
               Do you offer international shipping?
             </span>
             {activeTab === 5 ? (
@@ -273,7 +273,7 @@ const Faq = () => {
             className="flex items-center justify-between w-full"
             onClick={() => toogleTab(6)}
           >
-            <span className="text-lg font-medium text-gray-900">
+            <span className="text-lg text-left font-medium text-gray-900">
               What payment methods do you accept?
             </span>
             {activeTab === 6 ? (

@@ -41,9 +41,9 @@ const ProfileSideBar = ({ active, setActive }) => {
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(1)}
       >
-        <RxPerson size={20} color={active === 1 ? "red" : ""} />
+        <RxPerson size={20} color={active === 1 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 1 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 1 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Profile
         </span>
@@ -52,9 +52,9 @@ const ProfileSideBar = ({ active, setActive }) => {
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(2)}
       >
-        <IoBagHandleOutline size={20} color={active === 2 ? "red" : ""} />
+        <IoBagHandleOutline size={20} color={active === 2 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 2 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 2 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Orders
         </span>
@@ -63,9 +63,9 @@ const ProfileSideBar = ({ active, setActive }) => {
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(3)}
       >
-        <HiOutlineReceiptRefund size={20} color={active === 3 ? "red" : ""} />
+        <HiOutlineReceiptRefund size={20} color={active === 3 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 3 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 3 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Refunds
         </span>
@@ -78,9 +78,9 @@ const ProfileSideBar = ({ active, setActive }) => {
           navigate("/inbox");
         }}
       >
-        <AiOutlineMessage size={20} color={active === 4 ? "red" : ""} />
+        <AiOutlineMessage size={20} color={active === 4 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 4 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 4 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Inbox
         </span>
@@ -90,9 +90,9 @@ const ProfileSideBar = ({ active, setActive }) => {
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(5)}
       >
-        <MdOutlineTrackChanges size={20} color={active === 5 ? "red" : ""} />
+        <MdOutlineTrackChanges size={20} color={active === 5 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 5 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 5 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Track Order
         </span>
@@ -104,9 +104,9 @@ const ProfileSideBar = ({ active, setActive }) => {
           setActive(6);
         }}
       >
-        <RiLockPasswordLine size={20} color={active === 6 ? "red" : ""} />
+        <RiLockPasswordLine size={20} color={active === 6 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 6 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 6 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Change Password
         </span>
@@ -116,9 +116,9 @@ const ProfileSideBar = ({ active, setActive }) => {
         className="flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(7)}
       >
-        <TbAddressBook size={20} color={active === 7 ? "red" : ""} />
+        <TbAddressBook size={20} color={active === 7 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 7 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 7 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Address
         </span>
@@ -128,9 +128,9 @@ const ProfileSideBar = ({ active, setActive }) => {
         className="single_item flex items-center cursor-pointer w-full mb-8"
         onClick={() => setActive(8) || LogoutHandler()}
       >
-        <AiOutlineLogin size={20} color={active === 8 ? "red" : ""} />
+        <AiOutlineLogin size={20} color={active === 8 ? "#a30563" : ""} />
         <span
-          className={`pl-3 font-Roboto text-[18px] ${active === 8 ? "text-[red]" : ""} 800px:block hidden`}
+          className={`pl-3 font-Roboto text-[18px] ${active === 8 ? "text-[#a30563]" : ""} 800px:block hidden`}
         >
           Log out
         </span>
