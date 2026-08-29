@@ -32,6 +32,7 @@ const ShopCreate = () => {
       try {
         const config = {
           headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
         };
   
         const newForm = new FormData();

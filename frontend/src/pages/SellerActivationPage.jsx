@@ -13,7 +13,9 @@ const SellerActivationPage = () => {
                 try{
                     const res= await axios.post(
                         `${server}/shop/activation`,
-                        { activation_token }
+                        { activation_token },{
+                            withCredentials: true,
+                        }
                     );
                     console.log(res.data.message);
                 }catch(error){
