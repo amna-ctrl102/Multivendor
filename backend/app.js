@@ -1,46 +1,54 @@
-const express= require("express");
-const app=express();
+const express = require("express");
+const app = express();
 const errorMiddleware = require("./middleware/error");
-const cookieParser=require("cookie-parser");
-const userRouter=require("./controller/user");
-const shopRouter=require("./controller/shop");
-const productRouter=require("./controller/product");
-const eventRouter=require("./controller/event");
-const coupounRouter=require("./controller/coupounCode");
-const paymentRouter=require("./controller/payment");
-const orderRouter=require("./controller/order");
-const conversationRouter=require("./controller/conversation");
-const messageRouter=require("./controller/message");
-const cors= require("cors");
+const cookieParser = require("cookie-parser");
+const userRouter = require("./controller/user");
+const shopRouter = require("./controller/shop");
+const productRouter = require("./controller/product");
+const eventRouter = require("./controller/event");
+const coupounRouter = require("./controller/coupounCode");
+const paymentRouter = require("./controller/payment");
+const orderRouter = require("./controller/order");
+const conversationRouter = require("./controller/conversation");
+const messageRouter = require("./controller/message");
+const cors = require("cors");
 
 //config
-if(process.env.NODE_ENV !== "PRODUCTION"){
-    require("dotenv").config({
-        path: `${__dirname}/config/.env`
-    })
+if (process.env.NODE_ENV !== "PRODUCTION") {
+  require("dotenv").config({
+    path: `${__dirname}/config/.env`,
+  });
 }
- 
-app.use(cors({
-    origin: "http://localhost:3000",
+
+app.use(
+  cors({
+    origin: ["https://multivendor-frontend-amber.vercel.app", "http://localhost:3000"],
     credentials: true,
-}));
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  }),
+);
+
+app.get("/", (req, res) => {
+  res.send("API working 🚀");
+});
+
 app.use(express.json());
 app.use(cookieParser());
-app.use("/uploads",express.static("uploads"));
-app.use(express.urlencoded({extended:true}));
+app.use("/uploads", express.static("uploads"));
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use("/api/v2/user",userRouter);
-app.use("/api/v2/shop",shopRouter);
-app.use("/api/v2/product",productRouter);
-app.use("/api/v2/event",eventRouter);
-app.use("/api/v2/coupoun",coupounRouter);
-app.use("/api/v2/payment",paymentRouter);
-app.use("/api/v2/order",orderRouter);
-app.use("/api/v2/conversation",conversationRouter);
-app.use("/api/v2/message",messageRouter);
+app.use("/api/v2/user", userRouter);
+app.use("/api/v2/shop", shopRouter);
+app.use("/api/v2/product", productRouter);
+app.use("/api/v2/event", eventRouter);
+app.use("/api/v2/coupoun", coupounRouter);
+app.use("/api/v2/payment", paymentRouter);
+app.use("/api/v2/order", orderRouter);
+app.use("/api/v2/conversation", conversationRouter);
+app.use("/api/v2/message", messageRouter);
 
 // it's for Errorhandling
 app.use(errorMiddleware);
 
-module.exports=app;
+module.exports = app;
