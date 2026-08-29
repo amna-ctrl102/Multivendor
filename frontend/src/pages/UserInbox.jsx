@@ -63,9 +63,10 @@ const UserInbox = () => {
     const refreshMessages = async () => {
       try {
         const res = await axios.get(
-          `${server}/message/get-all-messages/${currentChat._id}`,{
+          `${server}/message/get-all-messages/${currentChat._id}`,
+          {
             withCredentials: true,
-          }
+          },
         );
 
         setMessages(res.data.messages || []);
@@ -155,9 +156,10 @@ const UserInbox = () => {
     const getMessage = async () => {
       try {
         const res = await axios.get(
-          `${server}/message/get-all-messages/${currentChat._id}`,{
+          `${server}/message/get-all-messages/${currentChat._id}`,
+          {
             withCredentials: true,
-          }
+          },
         );
 
         setMessages(res.data.messages || []);
@@ -376,7 +378,7 @@ const MessageList = ({
 
     const getShop = async () => {
       try {
-        const res = await axios.get(`${server}/shop/get-shop-info/${userId}`,{
+        const res = await axios.get(`${server}/shop/get-shop-info/${userId}`, {
           withCredentials: true,
         });
 
