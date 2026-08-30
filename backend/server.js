@@ -3,7 +3,7 @@ require("dotenv").config({
 });
 
 const app = require("./app");
-const connectDatabase = require("./db/database");
+const connectDatabase = require("./db/Database");
 
 // Connect MongoDB
 connectDatabase();
