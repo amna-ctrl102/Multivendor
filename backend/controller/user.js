@@ -1,10 +1,8 @@
 const express = require("express");
-const path = require("path");
 const router = express.Router();
 const { upload } = require("../multer");
 const User = require("../model/user");
 const ErrorHandler = require("../utils/ErrorHandler");
-const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
@@ -13,33 +11,35 @@ const { isAuthenticated } = require("../middleware/auth");
 router.post("/create-user", upload.single("file"), async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
+
+    if (!req.file) {
+      return next(new ErrorHandler("Please upload an avatar", 400));
+    }
+
     const userInfo = await User.findOne({ email });
+
     if (userInfo) {
-      if (req.file) {
-        const filename = req.file.filename;
-        const filePath = `uploads/${filename}`;
-        fs.unlink(filePath, (err) => {
-          if (err) console.log(err);
-        });
-      }
       return next(new ErrorHandler("User already exists", 400));
     }
-    const filename = req.file.filename;
-    const fileUrl = path.join("uploads", filename);
+
     const user = {
       name,
       email,
       password,
-      avatar: fileUrl,
+      avatar: req.file.path,
     };
+
     const activationToken = createActivationToken(user);
-    const activateUrl = `http://localhost:3000/activation/${activationToken}`;
+
+    const activateUrl = `https://multivendor-frontend-amber.vercel.app/activation/${activationToken}`;
+
     try {
       await sendMail({
         email: user.email,
         subject: "Activate your account",
         message: `Hello ${user.name}, please click on the link to activate your account: ${activateUrl}`,
       });
+
       res.status(201).json({
         success: true,
         message: `please check your email:- ${user.email} to activate your account!`,
@@ -183,6 +183,7 @@ router.put(
   async (req, res, next) => {
     try {
       const existUser = await User.findById(req.user._id);
+
       if (!existUser) {
         return next(new ErrorHandler("User doesn't exist", 400));
       }
@@ -191,14 +192,8 @@ router.put(
         return next(new ErrorHandler("Please upload an image", 400));
       }
 
-      const existAvatarPath = existUser.avatar;
-
-      fs.unlink(existAvatarPath, (err) => {
-        if (err) console.log(err);
-      });
-
-      const filename = req.file.filename;
-      const fileUrl = path.join("uploads", filename);
+      // Cloudinary image URL
+      const fileUrl = req.file.path;
 
       const user = await User.findByIdAndUpdate(
         req.user._id,
@@ -206,7 +201,7 @@ router.put(
           avatar: fileUrl,
         },
         {
-          returnDocument: "after",
+          new: true,
         },
       );
 

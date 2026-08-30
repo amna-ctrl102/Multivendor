@@ -10,31 +10,26 @@ router.post(
   upload.array("image"),
   async (req, res, next) => {
     try {
-      const messageData = req.body;
-      if (req.files) {
-        const files = req.files;
-        const imageUrls = files.map((file) => `uploads/${file.filename}`);
-        messageData.images = imageUrls;
-      }
+      const { conversationId, sender, text } = req.body;
 
-      messageData.conversationId = req.body.conversationId;
-      messageData.sender = req.body.sender;
-      messageData.text = req.body.text;
+      // Cloudinary image URLs
+      const imageUrls = req.files?.map((file) => file.path) || [];
 
       const message = new Messages({
-        conversationId: messageData.conversationId,
-        sender: messageData.sender,
-        text: messageData.text,
-        images: messageData.images ? messageData.images : undefined,
+        conversationId,
+        sender,
+        text,
+        images: imageUrls.length > 0 ? imageUrls : undefined,
       });
 
       await message.save();
+
       res.status(201).json({
         success: true,
         message,
       });
     } catch (error) {
-      return next(new ErrorHandler(error, 500));
+      return next(new ErrorHandler(error.message, 500));
     }
   },
 );
@@ -46,12 +41,12 @@ router.get("/get-all-messages/:id", async (req, res, next) => {
       conversationId: req.params.id,
     });
 
-    res.status(201).json({
+    res.status(200).json({
       success: true,
       messages,
     });
   } catch (error) {
-    return next(new ErrorHandler(error.response.message), 500);
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 

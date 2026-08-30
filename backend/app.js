@@ -20,6 +20,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   });
 }
 
+
 app.use(
   cors({
     origin: ["https://multivendor-frontend-amber.vercel.app", "http://localhost:3000"],

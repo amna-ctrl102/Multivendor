@@ -1,12 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const path = require("path");
 const { upload } = require("../multer");
 const Shop = require("../model/shop");
 const Product = require("../model/product");
 const Event = require("../model/event");
 const ErrorHandler = require("../utils/ErrorHandler");
-const fs = require("fs");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const sendShopToken = require("../utils/shopToken");
@@ -14,32 +12,37 @@ const { isSeller } = require("../middleware/auth");
 
 router.post("/create-shop", upload.single("file"), async (req, res, next) => {
   try {
-    const { email } = req.body;
+    const { email, name, password, address, phoneNumber, zipCode } = req.body;
+
+    // Check if shop already exists
     const sellerInfo = await Shop.findOne({ email });
+
     if (sellerInfo) {
-      if (req.file) {
-        const filename = req.file.filename;
-        const filePath = `uploads/${filename}`;
-        fs.unlink(filePath, (err) => {
-          if (err) console.log(err);
-        });
-      }
       return next(new ErrorHandler("Shop already exists", 400));
     }
-    const filename = req.file.filename;
-    const fileUrl = path.join("uploads", filename);
+
+    // Check image
+    if (!req.file) {
+      return next(new ErrorHandler("Please upload a shop image", 400));
+    }
+
+    // Cloudinary image URL
+    const fileUrl = req.file.path;
+
     const seller = {
-      name: req.body.name,
+      name,
       email,
-      password: req.body.password,
+      password,
       avatar: fileUrl,
-      address: req.body.address,
-      phoneNumber: req.body.phoneNumber,
-      zipCode: req.body.zipCode,
+      address,
+      phoneNumber,
+      zipCode,
     };
 
+    // Create activation token
     const activationToken = createActivationToken(seller);
-    const activateUrl = `http://localhost:3000/seller/activation/${activationToken}`;
+
+    const activateUrl = `https://multivendor-frontend-amber.vercel.app/seller/activation/${activationToken}`;
 
     try {
       await sendMail({
@@ -47,15 +50,16 @@ router.post("/create-shop", upload.single("file"), async (req, res, next) => {
         subject: "Activate your shop",
         message: `Hello ${seller.name}, please click on the link to activate your shop: ${activateUrl}`,
       });
+
       res.status(201).json({
         success: true,
-        message: `please check your email:- ${seller.email} to activate your shop!`,
+        message: `Please check your email:- ${seller.email} to activate your shop!`,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   } catch (error) {
-    return next(new ErrorHandler(error.message, 400));
+    return next(new ErrorHandler(error.message, 500));
   }
 });
 
@@ -180,6 +184,7 @@ router.put(
   async (req, res, next) => {
     try {
       const existShop = await Shop.findById(req.seller._id);
+
       if (!existShop) {
         return next(new ErrorHandler("Shop doesn't exist", 400));
       }
@@ -188,25 +193,21 @@ router.put(
         return next(new ErrorHandler("Please upload an image", 400));
       }
 
-      const existAvatarPath = existShop.avatar;
+      // Cloudinary URL
+      const fileUrl = req.file.path;
 
-      fs.unlink(existAvatarPath, (err) => {
-        if (err) console.log(err);
-      });
-
-      const filename = req.file.filename;
-      const fileUrl = path.join("uploads", filename);
-
+      // Update shop avatar
       const shop = await Shop.findByIdAndUpdate(
         req.seller._id,
         {
           avatar: fileUrl,
         },
         {
-          returnDocument: "after",
+          new: true,
         },
       );
 
+      // Update shop avatar inside all products
       await Product.updateMany(
         { "shop._id": shop._id },
         {
@@ -215,7 +216,8 @@ router.put(
           },
         },
       );
-      
+
+      // Update shop avatar inside all events
       await Event.updateMany(
         { "shop._id": shop._id },
         {
@@ -234,7 +236,6 @@ router.put(
     }
   },
 );
-
 // update seller info
 router.put("/update-shop-info", isSeller, async (req, res, next) => {
   try {
